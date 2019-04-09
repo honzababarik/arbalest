@@ -1,12 +1,18 @@
 <template>
-  <div class="response" @click="onClick">
-    <div class="info">
-      <div class="label" :class="getMethodLabelCss">{{response.method}}</div>
-      <div class="label" :class="getStatusLabelCss">{{response.status}}</div>
-      <div class="url">{{response.url}}</div>
+  <div class="response">
+    <div class="main" @click="onClick">
+      <div class="info">
+        <div class="tag" :class="getMethodTagCss">{{response.method}}</div>
+        <div class="tag" :class="getStatusTagCss">{{response.status}}</div>
+        <div class="url">{{response.url}}</div>
+      </div>
+      <div>
+        <div class="time">{{response.time}}ms</div>
+      </div>
     </div>
-    <div>
-      <div class="time">{{response.time}}ms</div>
+    <div class="side" v-if="isExpanded">
+      <label>Body</label>
+      <pre>{{getData}}</pre>
     </div>
   </div>
 </template>
@@ -17,13 +23,21 @@
     props: {
       response: Object
     },
+    data: function () {
+      return {
+        isExpanded: false
+      }
+    },
     methods: {
       onClick() {
-        // TODO expand
+        this.isExpanded = !this.isExpanded
       }
     },
     computed: {
-      getMethodLabelCss: function () {
+      getData: function () {
+        return JSON.parse(this.response.data)
+      },
+      getMethodTagCss: function () {
         switch (this.response.method) {
           case 'GET':
             return 'success'
@@ -37,13 +51,10 @@
           default: return ''
         }
       },
-      getStatusLabelCss: function () {
+      getStatusTagCss: function () {
         const status = this.response.status
         if (status >= 200 && status < 300) {
           return 'success'
-        }
-        if (status >= 300 && status < 400) {
-          return 'info'
         }
         if (status >= 400 && status < 500) {
           return 'warning'
@@ -61,28 +72,28 @@
 
 <style lang="scss">
 
-   $border-color: rgba(64, 64, 64, 1);
-   $background-color: rgba(40, 40, 40, 1);
-   $gray-color: rgba(48, 48, 48, 1);
-   $text-color-dark: rgba(150, 150, 150, 1);
-   $navbar-height: 70px;
-   $success-color: green;
+   @import '../styles/vars.scss';
 
   .response {
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-    justify-content: space-between;
-    padding: 15px;
-    background-color: $gray-color;
     border-bottom: 1px solid $background-color;
-    cursor: pointer;
+    .main {
+      cursor: pointer;
+      background-color: $gray-color;
+      padding: 15px;
+      display: flex;
+      flex-direction: row;
+      flex: 1;
+      justify-content: space-between;
+    }
+    .side {
+      padding: 10px 15px;
+    }
     .info {
       display: flex;
       flex-direction: row;
       align-items: center;
     }
-    .label {
+    .tag {
       margin-right: 10px;
     }
     .time {
