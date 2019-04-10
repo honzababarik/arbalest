@@ -1,0 +1,30 @@
+{
+  "config": {
+    "target": "SOME URL",
+    "phases": [
+      {
+        "duration": 5,
+        "arrivalRate": 1
+      }
+    ],
+    "defaults": {
+      "headers": {
+        "Authorization": "Bearer SOMETOKEN"
+      }
+    },
+    "processor": "./log.js"
+  },
+  "scenarios": [
+    {
+      "flow": [
+        {
+          "get": {
+            "url": "/PATH",
+            "beforeRequest": "beforeRequest",
+            "afterResponse": "afterResponse"
+          }
+        }
+      ]
+    }
+  ]
+}
