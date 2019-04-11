@@ -1,57 +1,77 @@
 <template>
   <div class="wrapper">
     <div class="header">
-      <h1>Configs</h1>
-      <button>+</button>
+      <div class="d-flex">
+        <button class="btn btn-success btn-circle right-sm" @click="onClickAdd">+</button>
+        <h1>Configs</h1>
+      </div>
+      <div>
+        <button class="btn" @click="onClickMenu">
+          <font-awesome-icon icon='ellipsis-v'></font-awesome-icon>
+        </button>
+      </div>
     </div>
     <div class="content">
-      <Config v-for="config in configs" :key="config.id" :config="config"></Config>
+      <ConfigListItem
+        v-for="config in configs" :key="config.id"
+        :config="config" :is-active="selectedConfigId === config.id"
+        @click="onClickConfig" @run="onClickRunConfig">
+      </ConfigListItem>
     </div>
   </div>
 </template>
 
 <script>
 
-  import Config from './Config'
+  import router from '@/router/';
+  import ConfigListItem from './ConfigListItem'
+  import { mapGetters } from 'vuex'
 
   export default {
     name: 'configs',
     components: {
-      Config
+      ConfigListItem
     },
     data() {
       return {
-        configs: [{
-          id: 1,
-          name: 'Test Configuration',
-          filename: 'testtest.yaml'
-        }]
+
       };
     },
     methods: {
-      loadConfigs() {
-        // TODO
+      onClickMenu() {
+
+      },
+      onClickAdd() {
+        this.$store.dispatch('Config/selectConfig', null)
+        this.$router.push({ name: 'config-create' })
+      },
+      onClickConfig(config) {
+        this.$store.dispatch('Config/selectConfig', config.id)
+        this.$router.push({ name: 'config', params: { config_id: config.id } })
+      },
+      onClickRunConfig(config) {
+        this.$store.dispatch('Config/selectConfig', config.id)
+        this.$router.push({ name: 'config', params: { config_id: config.id, action: 'run' } })
       }
     },
     computed: {
-
-    },
-    beforeDestroy() {
-
-    },
-    mounted() {
-      this.loadConfigs()
+      ...mapGetters({
+        configs: 'Config/getConfigs',
+        selectedConfigId: 'Config/getSelectedConfigId'
+      })
     }
   };
 
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
   @import "../styles/vars.scss";
 
   .wrapper {
     height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
 
   .header {
@@ -64,6 +84,11 @@
     h1 {
       font-size: 20px;
     }
+  }
+
+  .content {
+    overflow: scroll;
+    flex: 1;
   }
 
 </style>

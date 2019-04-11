@@ -4,16 +4,21 @@ function beforeRequest(requestParams, context, ee, next) {
 }
 
 function afterResponse(requestParams, response, context, ee, next) {
-  console.log(JSON.stringify({
+  const contentType = response.headers['content-type'];
+  const log = {
     type: 'response',
     data: {
       method: requestParams.method,
       url: requestParams.url,
       status: response.statusCode,
-      data: response.body,
       time: Date.now() - context.vars.startedAt,
+      contentType,
     },
-  }));
+  };
+  if (contentType === 'application/json') {
+    log.data.data = response.body;
+  }
+  console.log(JSON.stringify(log));
   return next();
 }
 

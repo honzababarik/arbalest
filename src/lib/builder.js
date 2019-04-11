@@ -11,7 +11,7 @@ const toScenarioJSON = (scenario) => {
 };
 
 
-class ConfigurationBuilder {
+class ConfigBuilder {
 
   constructor(targetUrl, duration, rate) {
     this.targetUrl = targetUrl;
@@ -50,4 +50,4 @@ class ConfigurationBuilder {
 
 }
 
-export default ConfigurationBuilder;
+export default ConfigBuilder;

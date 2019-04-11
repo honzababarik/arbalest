@@ -25,8 +25,7 @@ class Artillery extends Observable {
   }
 
   parseText(str) {
-    const lines = str.split('\n');
-    return lines.map(line => line.trim());
+    return str.split('\n');
   }
 
   parseLog(text) {
@@ -45,13 +44,14 @@ class Artillery extends Observable {
   }
 
   onLog = (text) => {
-    const data = this.parseLog(text);
-    if (data.type === 'response') {
-      this.emit('response', data.data);
+    const json = this.parseLog(text);
+    if (json.type === 'response') {
+      console.log(json)
+      this.emit('response', json.data);
     }
-    else if (data.type === 'text') {
-      for (let i = 0; i < data.data.length; i++) {
-        this.emit('line', data.data[i]);
+    else if (json.type === 'text') {
+      for (let i = 0; i < json.data.length; i++) {
+        this.emit('line', json.data[i]);
       }
     }
   }

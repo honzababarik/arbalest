@@ -11,8 +11,12 @@
       </div>
     </div>
     <div class="side" v-if="isExpanded">
-      <label>Body</label>
-      <pre>{{getData}}</pre>
+      <label>Content Type</label>
+      <pre>{{response.contentType}}</pre>
+      <div v-if="response.data">
+        <label>Body</label>
+        <pre>{{getData}}</pre>
+      </div>
     </div>
   </div>
 </template>
@@ -21,56 +25,56 @@
 
   export default {
     props: {
-      response: Object
+      response: Object,
     },
-    data: function () {
+    data() {
       return {
-        isExpanded: false
-      }
+        isExpanded: false,
+      };
     },
     methods: {
       onClick() {
-        this.isExpanded = !this.isExpanded
-      }
+        this.isExpanded = !this.isExpanded;
+      },
     },
     computed: {
-      getData: function () {
-        return JSON.parse(this.response.data)
+      getData() {
+        return JSON.parse(this.response.data);
       },
-      getMethodTagCss: function () {
+      getMethodTagCss() {
         switch (this.response.method) {
           case 'GET':
-            return 'success'
+            return 'success';
           case 'POST':
-            return 'warning'
+            return 'warning';
           case 'PATCH':
           case 'PUT':
-            return 'info'
+            return 'info';
           case 'DELETE':
-            return 'danger'
-          default: return ''
+            return 'danger';
+          default: return '';
         }
       },
-      getStatusTagCss: function () {
-        const status = this.response.status
+      getStatusTagCss() {
+        const status = this.response.status;
         if (status >= 200 && status < 300) {
-          return 'success'
+          return 'success';
         }
         if (status >= 400 && status < 500) {
-          return 'warning'
+          return 'warning';
         }
         if (status >= 500) {
-          return 'danger'
+          return 'danger';
         }
-        return ''
+        return '';
       },
-    }
+    },
   };
 
 </script>
 
 
-<style lang="scss">
+<style lang="scss" scoped>
 
    @import '../styles/vars.scss';
 
@@ -84,6 +88,7 @@
       flex-direction: row;
       flex: 1;
       justify-content: space-between;
+      align-items: center;
     }
     .side {
       padding: 10px 15px;
@@ -96,9 +101,12 @@
     .tag {
       margin-right: 10px;
     }
+    .url {
+      font-size: 14px;
+    }
     .time {
       color: $text-color-dark;
-      font-size: 14px;
+      font-size: 12px;
     }
   }
 
