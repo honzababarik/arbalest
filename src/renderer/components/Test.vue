@@ -31,7 +31,7 @@
         <ResponseListItem v-for="(response, i) in displayResponses" :key="i" :response="response"></ResponseListItem>
       </Panel>
 
-      <Panel header='Terminal' css='panel-terminal' ref="terminal" :is-collapsible="true" :is-searchable="true" @search="onTerminalSearch">
+      <Panel header='Terminal' css='panel-terminal' ref="terminal" :is-collapsible="true" :is-searchable="true">
         <div v-for="(log, i) in displayLogs" :key="i" :class="log.css" slot="default">{{getDisplayLog(log)}}</div>
       </Panel>
     </div>
@@ -53,9 +53,6 @@
         confidId: null,
         config: null,
         artillery: null,
-        logSearch: {
-          query: null
-        }
       };
     },
     methods: {
@@ -86,9 +83,6 @@
           this.$store.dispatch('Config/deleteConfig', this.config.id)
           // TODO should make sure the jobs not running
         }
-      },
-      onTerminalSearch(query) {
-        this.logSearch.query = query
       }
     },
     watch: {
@@ -112,22 +106,11 @@
       isRunning() {
         return this.job && this.job.is_running
       },
-      displayLogs() {
-        if (!this.job) {
-          return []
-        }
-        let logs = this.job.logs
-        if (this.logSearch.query) {
-          const filter = this.logSearch.query.toLowerCase()
-          logs = logs.filter(log => log.text.toLowerCase().indexOf(filter) !== -1)
-        }
-        return logs
-      },
       displayResponses() {
-        if (!this.job) {
-          return []
-        }
-        return this.job.responses
+        return this.job ? this.job.responses : []
+      },
+      displayLogs() {
+        return this.job ? this.job.logs : []
       }
     },
     created() {

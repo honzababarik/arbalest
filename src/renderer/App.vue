@@ -40,6 +40,8 @@
   import EnvironmentModal from './views/EnvironmentModal';
   import Artillery from './components/Artillery';
 
+  // TODO explore terminal search better options
+
   // TODO add ability to provide Body to request
 
   // TODO change tests order
@@ -52,7 +54,6 @@
   // TODO make it possible to readjust the rate/duration on the Config screen
 
   // TODO test configuration more user friendly
-  // TODO explore terminal search better options
   // TODO explore more settings that might be useful
 
   // TODO create app menu + preferences
