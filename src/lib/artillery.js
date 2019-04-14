@@ -1,6 +1,7 @@
 import Terminal from './terminal';
 import Observable from './observable';
-
+import ConfigBuilder from './builder';
+import Storage from './storage';
 
 class Artillery extends Observable {
 
@@ -12,12 +13,24 @@ class Artillery extends Observable {
     this.reportPath = null;
   }
 
-  run(configPath) {
+  async run(config, settings, environment = null) {
+    const artilleryConfig = new ConfigBuilder(config, environment);
+    const configPath = await new Storage().createTempJson(artilleryConfig.toJSON());
+    this.emit('line', `Configuration stored under: ${configPath}`);
+
     this.configPath = configPath;
     this.reportPath = `${configPath}-report.json`;
+
+    const args = ['run', this.configPath, '-o', this.reportPath]
+
+    if (!settings.request.doesVerifySSL) {
+      args.push('-k');
+    }
+
     this.pid = this.terminal.run(
       'artillery',
-      ['run', this.configPath, '-o', this.reportPath],
+      args,
+      this.onStart,
       this.onLog,
       this.onError,
       this.onExit,
@@ -46,7 +59,6 @@ class Artillery extends Observable {
   onLog = (text) => {
     const json = this.parseLog(text);
     if (json.type === 'response') {
-      console.log(json)
       this.emit('response', json.data);
     }
     else if (json.type === 'text') {
@@ -54,6 +66,10 @@ class Artillery extends Observable {
         this.emit('line', json.data[i]);
       }
     }
+  }
+
+  onStart = (pid) => {
+    this.emit('run', pid);
   }
 
   onError = (err) => {
@@ -72,7 +88,6 @@ class Artillery extends Observable {
 
   stop() {
     this.terminal.forceQuit();
-    this.pid = null;
   }
 
   isRunning() {

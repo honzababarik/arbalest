@@ -21,7 +21,7 @@ class Terminal {
     this.subprocess = null;
   }
 
-  run(command, args, onOut, onErr, onExit) {
+  run(command, args, onStart, onOut, onErr, onExit) {
     if (this.pid) {
       if (onErr) {
         onErr('Command already running!');
@@ -34,7 +34,9 @@ class Terminal {
     this.subprocess = spawn(command, args);
     this.pid = this.subprocess.pid;
 
-    this.log(`Running ${command}, PID: ${this.pid}`);
+    onStart(this.pid);
+
+    this.log(`Running ${command}, PID: ${this.pid}, args: ${args.join(' ')}`);
     this.subprocess.stdout.on('data', onOut);
     this.subprocess.stderr.on('data', onErr);
 

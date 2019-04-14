@@ -31,7 +31,6 @@ const mutations = {
 
 const actions = {
   addConfig({ commit }, config) {
-    config.id = Math.floor(Math.random() * 10000000);
     commit('ADD_CONFIG', config);
   },
   updateConfig({ commit }, payload) {

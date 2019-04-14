@@ -1,20 +1,20 @@
 <template>
 
-  <Panel :header="isCreate ? 'Create Config' : 'Edit Config'" css='panel-config'>
-    <div class="form-group">
+  <Panel :header="isCreate ? 'Create Test' : 'Edit Test'" css='panel-config'>
+    <div class="form-group" :class="{'error': this.hasError('name')}">
       <label>Name</label>
-      <input type="text" v-model="config.name" placeholder="https://google.com">
+      <input type="text" v-model="config.name" placeholder="New Load Test">
     </div>
-    <div class="form-group">
+    <div class="form-group" :class="{'error': this.hasError('url')}">
       <label>URL</label>
       <input type="text" v-model="config.url" placeholder="https://google.com">
     </div>
     <div class="d-flex">
-      <div class="form-group right-sm">
+      <div class="form-group right-sm" :class="{'error': this.hasError('duration')}">
         <label>Duration (in seconds)</label>
         <input type="number" v-model.number="config.duration">
       </div>
-      <div class="form-group left-sm">
+      <div class="form-group left-sm" :class="{'error': this.hasError('rate')}">
         <label>Rate</label>
         <input type="number" v-model.number="config.rate">
       </div>
@@ -22,7 +22,7 @@
 
     <hr>
 
-    <div class="form-group">
+    <div class="form-group" :class="{'error': this.hasError('headers')}">
       <label>Headers</label>
       <div class="d-flex bottom-sm" v-for="(header, i) in config.headers" :key="i">
         <input class="form-control form-control-xs flex-1" type="text" v-model="header.name" placeholder="Name">
@@ -34,7 +34,7 @@
 
     <hr>
 
-    <div class="form-group">
+    <div class="form-group" :class="{'error': this.hasError('scenarios')}">
       <label>Scenarios</label>
       <div class="d-flex bottom-sm" v-for="(scenario, i) in config.scenarios" :key="i">
         <input class="form-control form-control-xs flex-1" type="text" v-model="scenario.method" placeholder="Method">
@@ -44,12 +44,16 @@
     </div>
     <button class="btn btn-info btn-xs" @click="onClickAddScenario">Add Scenario</button>
 
-    <div class="d-flex" slot="footer">
-      <div></div>
+    <template slot="footer">
+      <div>
+        <button class="btn btn-gray" @click="onClickCancel">
+          Cancel
+        </button>
+      </div>
       <button class="btn btn-success" @click="onClickSave">
         {{isCreate ? 'Create' : 'Save changes'}}
       </button>
-    </div>
+    </template>
   </Panel>
 
 </template>
@@ -65,7 +69,7 @@
       return {
         configId: null,
         config: {
-          name: `New Config [${Math.floor(Math.random() * 1000)}]`,
+          name: `New Test [${Math.floor(Math.random() * 1000)}]`,
           url: 'https://google.com',
           duration: 10,
           rate: 1,
@@ -77,6 +81,9 @@
       };
     },
     methods: {
+      onClickCancel() {
+        this.$router.go(-1);
+      },
       onClickAddScenario() {
         this.config.scenarios.push({ method: 'GET', url: '/' })
       },
@@ -94,10 +101,11 @@
       },
       isValidForm() {
         const errors = []
-        // TODO validate URL
-
         if (this.config.name.length === 0) {
           errors.push('name')
+        }
+        if (!this.$dvlt.validator.isValidBaseURL(this.config.url)) {
+          errors.push('url')
         }
         if (this.config.duration < 1) {
           errors.push('duration')
@@ -117,9 +125,9 @@
           return;
         }
 
-        // TODO show notification
-        const config = this.config
+        let config = this.config
         const data = {
+          id: config.id,
           name: config.name,
           url: config.url,
           duration: config.duration,
@@ -127,12 +135,19 @@
           headers: this.getHeaders(),
           scenarios: this.getScenarios()
         }
+
         if (this.isCreate) {
-          this.createConfig(data)
+          data.id = this.$dvlt.utils.guid();
+          this.createConfig(data);
+          this.$dvlt.notify('Config was created!');
         }
         else {
-          this.updateConfig(data)
+          this.$dvlt.notify('Your changes were saved!');
+          this.updateConfig(data);
         }
+
+        this.$store.dispatch('Config/selectConfig', data.id)
+        this.$router.push({ name: 'test', params: { config_id: data.id } })
       },
       createConfig(data) {
         this.$store.dispatch('Config/addConfig', data)
@@ -150,8 +165,7 @@
       },
       getScenarios() {
         return this.config.scenarios.filter(scenario => {
-          // TODO should validate URL is correct in addition to the base URL
-          return scenario.method && scenario.url
+          return scenario.method && this.$dvlt.validator.isValidURLPath(scenario.url)
         })
       },
     },
@@ -164,7 +178,7 @@
       const configId = this.$router.currentRoute.params['config_id'];
       if (configId) {
         this.configId = configId;
-        this.config = Object.assign({}, this.$store.getters['Config/getConfig'](configId))
+        this.config = JSON.parse(JSON.stringify(this.$store.getters['Config/getConfig'](configId)));
       }
     }
   };

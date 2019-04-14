@@ -1,23 +1,110 @@
 <template>
   <div id="app">
-    <div class="side">
-      <Configs></Configs>
+    <notifications position="top center" />
+    <div class="titlebar" :style="getTitlebarCss">
+      <div></div>
+      <div class="title">Arbalest</div>
+      <div class="text-right">
+        <EnvironmentDropdown
+          placeholder='[No Environment]'
+          :selectedItem="selectedEnvironment"
+          :items="environments"
+          display-key="name"
+          @select="onClickSelectEnvironment"
+          @edit="onClickEditEnvironment"
+          @add="onClickAddEnvironment" />
+        <button class="btn btn-transparent" @click="onClickSettings">
+          <Icon icon='cog' size='lg' />
+        </button>
+      </div>
     </div>
     <div class="main">
-      <router-view :key="$route.fullPath"></router-view>
+      <div class="sidebar">
+        <Tests></Tests>
+      </div>
+      <div class="mainbar">
+        <router-view :key="$route.fullPath"></router-view>
+      </div>
     </div>
+    <modals-container />
+    <Artillery v-for="job in jobs" :job="job" :settings="settings" :environment="selectedEnvironment" :key="job.config_id" />
   </div>
 </template>
 
 <script>
 
-  import Configs from './components/Configs';
+  import { remote } from 'electron';
+  import Tests from './components/Tests';
+  import EnvironmentDropdown from './components/EnvironmentDropdown';
+  import SettingsModal from './views/SettingsModal';
+  import EnvironmentModal from './views/EnvironmentModal';
+  import Artillery from './components/Artillery';
+
+  // TODO add ability to provide Body to request
+
+  // TODO change tests order
+
+  // TODO show report
+  // TODO show in progress stuff
+  // TODO show CPU/mem usage
+
+  // TODO fix positioning of responses/terminal
+  // TODO make it possible to readjust the rate/duration on the Config screen
+
+  // TODO test configuration more user friendly
+  // TODO explore terminal search better options
+  // TODO explore more settings that might be useful
+
+  // TODO create app menu + preferences
+
+  // TODO variable randomizer
+  // TODO folderize tests
 
   export default {
     name: 'Arbalest',
     components: {
-      Configs,
+      Tests,
+      EnvironmentDropdown,
+      Artillery,
     },
+    methods: {
+      onClickSettings() {
+        this.$modal.show(SettingsModal, {}, { height: 'auto' })
+      },
+      onClickSelectEnvironment(environmentId) {
+        this.$store.dispatch('Environment/selectEnvironment', environmentId)
+      },
+      onClickEditEnvironment(environmentId) {
+        this.$modal.show(EnvironmentModal, {
+          environmentId
+        }, {
+          height: 'auto'
+        })
+      },
+      onClickAddEnvironment() {
+        this.$modal.show(EnvironmentModal, {}, {
+          height: 'auto'
+        })
+      },
+    },
+    computed: {
+      jobs() {
+        return this.$store.getters['Job/getJobs']
+      },
+      settings() {
+        return this.$store.getters['Settings/getSettings']
+      },
+      environments() {
+        return this.$store.getters['Environment/getEnvironments']
+      },
+      selectedEnvironment() {
+        return this.$store.getters['Environment/getCurrentEnvironment']
+      },
+      getTitlebarCss() {
+        const color = this.selectedEnvironment ? this.selectedEnvironment.color : '#1fd6a6';
+        return `border-bottom-color: ${color}`
+      }
+    }
   };
 
 </script>
@@ -37,6 +124,14 @@
     outline: 0;
   }
 
+  .divider-h {
+    display: inline-block;
+    border-left: 1px solid $border-color;
+    height: 100%;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
   .form-group {
     display: flex;
     flex: 1;
@@ -45,6 +140,14 @@
     label {
       display: block;
       margin-bottom: 10px;
+    }
+    &.error {
+      label {
+        color: $danger-color;
+      }
+      input[type="text"], input[type="number"] {
+        border-color: $danger-color
+      }
     }
   }
   .form-control, .form-group input {
@@ -108,11 +211,7 @@
   }
 
   .no-select {
-     user-select: none; /* supported by Chrome and Opera */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
+    @include no-select;
   }
 
   label {
@@ -121,14 +220,68 @@
     color: $text-color-dark;
   }
 
+  .text-right {
+    text-align: right;
+  }
+
   #app {
     width: 100vw;
     height: 100vh;
     flex: 1;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     color: white;
     overflow: hidden;
+  }
+
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .titlebar {
+    -webkit-app-region: drag;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    -webkit-user-select: none;
+    -webkit-app-region: drag;
+    height: 40px;
+    border-bottom: 3px solid $theme-color;
+    .btn {
+      padding: 12px 16px;
+      cursor: pointer;
+      -webkit-app-region: no-drag;
+    }
+    & > div:first-child, & > div:last-child {
+      height: inherit;
+      width: 30%;
+    }
+    .text-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+  }
+
+  .sidebar {
+    flex: 1;
+    border-right: 3px solid $border-color;
+  }
+
+  .mainbar {
+    flex: 3;
+    display: flex;
+  }
+
+  .v--modal {
+    box-shadow: none;
+    border-radius: 8px;
+  }
+
+  .v--modal-overlay {
+    background: rgba(0, 0, 0, 0.7);
   }
 
   hr {
@@ -137,24 +290,17 @@
     border: 1px dashed $border-color;
   }
 
-  .side {
-    flex: 1;
-    border-right: 3px solid $border-color;
-  }
-
-  .main {
-    flex: 3;
-    display: flex;
-  }
-
   .btn {
     border: 0;
-    padding:12px 8px;
+    padding: 12px 8px;
     font-size: 16px;
     color: white;
     border-radius: 4px;
     cursor: pointer;
     background-color: $gray-color;
+    &:hover {
+      color: $text-color-dark;
+    }
     &.btn-success {
       background-color: $success-color;
     }

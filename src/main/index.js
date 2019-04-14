@@ -16,6 +16,8 @@ function createWindow() {
     height: 720,
     useContentSize: true,
     width: 1280,
+    frame: true,
+    titleBarStyle: 'hiddenInset',
     icon: path.join(__dirname, 'assets/icon.png'),
   });
 

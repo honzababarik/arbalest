@@ -29,6 +29,7 @@ module.exports = {
     'brace-style': 0,
     'arrow-body-style': 0,
     'no-plusplus': 0,
+    'max-len': 0,
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
   }

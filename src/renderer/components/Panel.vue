@@ -72,7 +72,7 @@
 </script>
 
 
-<style lang="scss" scoped>
+<style lang="scss">
 
   @import "../styles/vars.scss";
 
@@ -94,8 +94,16 @@
       overflow: scroll;
     }
     .panel-footer {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
       border-top: 1px solid $border-color;
       padding: 15px 10px 15px 10px;
+      .btn {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
     }
     & + .panel {
       border-left: 1px solid $border-color;

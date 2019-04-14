@@ -47,7 +47,7 @@ class Observable {
     return this;
   }
 
-  emit(eventName, data) {
+  emit(eventName, data = {}) {
     if (this.listeners[eventName]) {
       for (let i = 0; i < this.listeners[eventName].length; i++) {
         this.listeners[eventName][i](data);

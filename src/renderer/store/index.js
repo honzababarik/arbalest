@@ -7,6 +7,13 @@ import modules from './modules';
 const store = new Store();
 
 const vuexStorage = createPersistedState({
+  modules,
+  paths: [
+    'Config.configs',
+    'Settings.settings',
+    'Environment.environments',
+    'Environment.currentEnvironmentId',
+  ],
   storage: {
     getItem: (key) => {
       return store.get(key);

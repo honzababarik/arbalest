@@ -1,13 +1,26 @@
 $border-color: rgba(64, 64, 64, 1);
 $background-color: rgba(40, 40, 40, 1);
+$background-color-dark: rgba(20, 20, 20, 1);
 $gray-color: rgba(48, 48, 48, 1);
 $text-color-dark: rgba(150, 150, 150, 1);
+$text-color: white;;
 $success-color: green;
 $warning-color: orange;
 $danger-color: red;
 $info-color: blue;
 $active-color: orange;
+$theme-color: #1fd6a6;
+$disabled-color: #b8b8b8;
+$disabled-background-color: #ddd;
 
 $input-border-color: $border-color;
 $input-background-color: $gray-color;
 $input-border-radius: 4px;
+
+@mixin no-select {
+  user-select: none; /* supported by Chrome and Opera */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+}

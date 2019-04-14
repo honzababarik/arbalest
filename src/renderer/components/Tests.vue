@@ -3,20 +3,26 @@
     <div class="header">
       <div class="d-flex">
         <button class="btn btn-success btn-circle right-sm" @click="onClickAdd">+</button>
-        <h1>Configs</h1>
+        <h1>Tests</h1>
       </div>
       <div>
-        <button class="btn" @click="onClickMenu">
-          <font-awesome-icon icon='ellipsis-v'></font-awesome-icon>
-        </button>
+        <Dropdown>
+          <template slot="input">
+            <Icon icon='ellipsis-v' />
+          </template>
+          <template slot="items">
+            <li @click="onClickImport">Import...</li>
+            <li @click="onClickExport">Export...</li>
+          </template>
+        </Dropdown>
       </div>
     </div>
     <div class="content">
-      <ConfigListItem
+      <TestListItem
         v-for="config in configs" :key="config.id"
         :config="config" :is-active="selectedConfigId === config.id"
-        @click="onClickConfig" @run="onClickRunConfig">
-      </ConfigListItem>
+        @click="onClickConfig" @run="onClickRunConfig" @stop="onClickStopConfig">
+      </TestListItem>
     </div>
   </div>
 </template>
@@ -24,34 +30,40 @@
 <script>
 
   import router from '@/router/';
-  import ConfigListItem from './ConfigListItem'
+  import TestListItem from './TestListItem'
+  import Dropdown from './Dropdown'
   import { mapGetters } from 'vuex'
 
   export default {
     name: 'configs',
     components: {
-      ConfigListItem
-    },
-    data() {
-      return {
-
-      };
+      TestListItem,
+      Dropdown
     },
     methods: {
-      onClickMenu() {
-
+      onClickImport() {
+        // TODO import configs in JSON
+      },
+      onClickExport() {
+        // TODO export configs to JSON
       },
       onClickAdd() {
         this.$store.dispatch('Config/selectConfig', null)
-        this.$router.push({ name: 'config-create' })
+        this.$router.push({ name: 'test-create' })
       },
       onClickConfig(config) {
         this.$store.dispatch('Config/selectConfig', config.id)
-        this.$router.push({ name: 'config', params: { config_id: config.id } })
+        this.$router.push({ name: 'test', params: { config_id: config.id } })
       },
       onClickRunConfig(config) {
         this.$store.dispatch('Config/selectConfig', config.id)
-        this.$router.push({ name: 'config', params: { config_id: config.id, action: 'run' } })
+        this.$router.push({ name: 'test', params: { config_id: config.id } })
+        this.$store.dispatch('Job/startJob', config.id)
+      },
+      onClickStopConfig(config) {
+        this.$store.dispatch('Config/selectConfig', config.id)
+        this.$router.push({ name: 'test', params: { config_id: config.id } })
+        this.$store.dispatch('Job/stopJob', config.id)
       }
     },
     computed: {
