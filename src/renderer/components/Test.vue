@@ -95,7 +95,7 @@
     },
     computed: {
       job() {
-        return this.$store.getters['Job/getJobByConfigId'](this.configId)
+        return this.config ? this.$store.getters['Job/getJobByConfigId'](this.config.id) : null
       },
       settings() {
         return this.$store.getters['Settings/getSettings']
@@ -112,6 +112,9 @@
       displayLogs() {
         return this.job ? this.job.logs : []
       }
+    },
+    mounted() {
+      this.$refs.terminal.scroll()
     },
     created() {
       const params = this.$router.currentRoute.params;

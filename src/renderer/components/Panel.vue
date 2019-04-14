@@ -4,9 +4,13 @@
       <slot name="header">
         <div class="d-flex">
           <div>{{header}}</div>
-          <input
-            class="form-control form-control-xs" v-if="isSearchable"
-            placeholder="Search..." v-model="search" @click="onClickSearch">
+          <div class="search-group">
+            <span v-if="search.query && search.matches > 0">{{search.index + 1}} of {{search.matches}}</span>
+            <span v-if="search.query && search.matches === 0">No matches</span>
+            <input
+              class="form-control form-control-xs" v-if="isSearchable"
+              placeholder="Search..." v-model="search.query" @click="onClickSearch" @keyup="onKeyUpSearch">
+          </div>
         </div>
       </slot>
     </div>
@@ -20,6 +24,8 @@
 </template>
 
 <script>
+  import Mark from 'mark.js';
+
   export default {
     props: {
       header: String,
@@ -29,8 +35,14 @@
     },
     data: function() {
       return {
-        search: null,
-        isExpanded: true
+        search: {
+          index: 0,
+          query: null,
+          matches: 0,
+          $results: []
+        },
+        isExpanded: true,
+        marker: null
       };
     },
     methods: {
@@ -50,13 +62,47 @@
           })
         }
       },
+      onKeyUpSearch(e) {
+        if (e.key === 'Enter') {
+          if (this.search.matches > this.search.index + 1) {
+            this.search.index++;
+          }
+          else {
+            this.search.index = 0;
+          }
+          this.focusOnSearchedItem()
+        }
+      },
       onClickSearch(e) {
         e.stopPropagation()
+      },
+      onSearchDone(count) {
+        this.search.$results = this.$refs.body.getElementsByTagName('mark')
+        this.search.matches = count
+        this.search.index = 0
+        this.focusOnSearchedItem()
+      },
+      focusOnSearchedItem() {
+        const $mark = this.search.$results[this.search.index]
+        if ($mark) {
+          console.log($mark.offsetTop)
+          this.$refs.body.scrollTop = $mark.offsetTop;
+        }
+      },
+      markSearch(query) {
+        this.marker.unmark({
+          done: () => {
+            this.marker.mark(query, {
+              done: this.onSearchDone,
+              noMatch: () => this.onSearchDone(0)
+            })
+          }
+        })
       }
     },
     watch: {
-      search(newValue, oldValue) {
-        this.$emit('search', newValue)
+      'search.query'(newQuery, oldQuery) {
+        this.markSearch(newQuery)
       }
     },
     computed: {
@@ -66,6 +112,11 @@
       },
       hasFooter () {
         return !!this.$slots['footer']
+      }
+    },
+    mounted() {
+      if (this.isSearchable) {
+        this.marker = new Mark(this.$refs.body);
       }
     }
   };
@@ -92,6 +143,7 @@
     }
     .panel-body {
       overflow: scroll;
+      position: relative;
     }
     .panel-footer {
       display: flex;
@@ -125,6 +177,17 @@
         padding: 15px 10px;
         word-break: break-all;
       }
+    }
+  }
+
+  .search-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    span {
+      text-transform: initial;
+      margin-right: 10px;
+      color: $text-color-dark;
     }
   }
 

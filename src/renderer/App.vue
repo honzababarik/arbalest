@@ -40,8 +40,6 @@
   import EnvironmentModal from './views/EnvironmentModal';
   import Artillery from './components/Artillery';
 
-  // TODO explore terminal search better options
-
   // TODO add ability to provide Body to request
 
   // TODO change tests order
