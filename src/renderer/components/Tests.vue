@@ -6,23 +6,21 @@
         <h1>Tests</h1>
       </div>
       <div>
-        <Dropdown>
+        <Dropdown css='dropdown-relative dropdown-right' @select="onDropdownSelected" :items="dropdownItems">
           <template slot="input">
             <Icon icon='ellipsis-v' />
-          </template>
-          <template slot="items">
-            <li @click="onClickImport">Import...</li>
-            <li @click="onClickExport">Export...</li>
           </template>
         </Dropdown>
       </div>
     </div>
     <div class="content">
-      <TestListItem
-        v-for="config in configs" :key="config.id"
-        :config="config" :is-active="selectedConfigId === config.id"
-        @click="onClickConfig" @run="onClickRunConfig" @stop="onClickStopConfig">
-      </TestListItem>
+      <draggable @end="onStopDragging">
+        <TestListItem
+          v-for="config in configs" :key="config.id"
+          :config="config" :is-active="selectedConfigId === config.id"
+          @click="onClickConfig" @run="onClickRunConfig" @stop="onClickStopConfig">
+        </TestListItem>
+      </draggable>
     </div>
   </div>
 </template>
@@ -33,12 +31,19 @@
   import TestListItem from './TestListItem'
   import Dropdown from './Dropdown'
   import { mapGetters } from 'vuex'
+  import draggable from 'vuedraggable'
 
   export default {
     name: 'configs',
     components: {
       TestListItem,
-      Dropdown
+      Dropdown,
+      draggable
+    },
+    data() {
+      return {
+        dropdownItems: ['Import', 'Export']
+      }
     },
     methods: {
       onClickImport() {
@@ -46,6 +51,18 @@
       },
       onClickExport() {
         // TODO export configs to JSON
+      },
+      onDropdownSelected(index) {
+        switch (index) {
+          case 0: this.onClickImport(); break;
+          case 1: this.onClickExport(); break;
+        }
+      },
+      onStopDragging(e) {
+        this.$store.dispatch('Config/reorderConfig', {
+          oldIndex: e.oldIndex,
+          newIndex: e.newIndex
+        })
       },
       onClickAdd() {
         this.$store.dispatch('Config/selectConfig', null)

@@ -9,7 +9,7 @@
             <span v-if="search.query && search.matches === 0">No matches</span>
             <input
               class="form-control form-control-xs" v-if="isSearchable"
-              placeholder="Search..." v-model="search.query" @click="onClickSearch" @keyup="onKeyUpSearch">
+              placeholder="Search..." v-model.trim="search.query" @click="onClickSearch" @keyup="onKeyUpSearch">
           </div>
         </div>
       </slot>
@@ -85,7 +85,6 @@
       focusOnSearchedItem() {
         const $mark = this.search.$results[this.search.index]
         if ($mark) {
-          console.log($mark.offsetTop)
           this.$refs.body.scrollTop = $mark.offsetTop;
         }
       },
@@ -143,7 +142,6 @@
     }
     .panel-body {
       overflow: scroll;
-      position: relative;
     }
     .panel-footer {
       display: flex;
@@ -171,6 +169,7 @@
         }
       }
       .panel-body {
+        position: relative;
         font-family: Consolas, monospace;
         white-space: pre-wrap;
         font-size: 14px;

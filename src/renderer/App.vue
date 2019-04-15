@@ -42,8 +42,6 @@
 
   // TODO add ability to provide Body to request
 
-  // TODO change tests order
-
   // TODO show report
   // TODO show in progress stuff
   // TODO show CPU/mem usage
@@ -55,7 +53,6 @@
   // TODO explore more settings that might be useful
 
   // TODO create app menu + preferences
-
   // TODO variable randomizer
   // TODO folderize tests
 
@@ -266,6 +263,7 @@
 
   .sidebar {
     flex: 1;
+    positon: relative;
     border-right: 3px solid $border-color;
   }
 

@@ -4,7 +4,7 @@
     <div class="body">
       <div class="form-group" :class="{'error': this.hasError('name')}">
         <label>Name</label>
-        <input type="text" v-model="environment.name" placeholder="https://google.com">
+        <input type="text" v-model.trim="environment.name" placeholder="https://google.com">
       </div>
       <div class="form-group">
         <label>Color</label>
@@ -19,8 +19,8 @@
       <div class="form-group">
         <label>Variables</label>
         <div class="d-flex bottom-sm" v-for="(variable, i) in environment.variables" :key="i">
-          <input class="form-control form-control-xs flex-1" type="text" v-model="variable.key" placeholder="Key">
-          <input class="form-control form-control-xs flex-1 left-sm" type="text" v-model="variable.value" placeholder="Value">
+          <input class="form-control form-control-xs flex-1" type="text" v-model.trim="variable.key" placeholder="Key">
+          <input class="form-control form-control-xs flex-1 left-sm" type="text" v-model.trim="variable.value" placeholder="Value">
           <button class="btn left-sm btn-xs" @click="onClickRemoveVariable(i)">Remove</button>
         </div>
       </div>

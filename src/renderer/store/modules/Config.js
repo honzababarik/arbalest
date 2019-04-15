@@ -1,31 +1,42 @@
-import Vue from 'vue';
+const moveElement = (arr, oldIndex, newIndex) => {
+  arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0]);
+};
 
 const state = {
-  configs: {},
+  configs: [],
   selectedConfigId: null,
 };
 
 const getters = {
   getConfigs: state => state.configs,
-  getConfig: state => configId => state.configs[configId],
+  getConfig: state => configId => state.configs.find(c => c.id === configId),
   getSelectedConfigId: state => state.selectedConfigId,
 };
 
 const mutations = {
   ADD_CONFIG(state, config) {
-    Vue.set(state.configs, config.id, config);
+    state.configs.push(config);
   },
   DELETE_CONFIG(state, configId) {
-    Vue.delete(state.configs, configId);
+    const index = state.configs.findIndex(c => c.id === configId);
+    if (index !== -1) {
+      state.configs.splice(index, 1);
+    }
   },
   SELECT_CONFIG(state, configId) {
     state.selectedConfigId = configId;
   },
   UPDATE_CONFIG(state, { id, data }) {
-    const existingConfig = state.configs[id];
-    if (existingConfig) {
-      state.configs[id] = Object.assign(existingConfig, data);
+    const index = state.configs.findIndex(c => c.id === id);
+    if (index !== -1) {
+      state.configs[index] = Object.assign(state.configs[index], data);
     }
+  },
+  REORDER_CONFIG(state, { oldIndex, newIndex }) {
+    if (oldIndex === newIndex) {
+      return;
+    }
+    moveElement(state.configs, oldIndex, newIndex);
   },
 };
 
@@ -35,6 +46,9 @@ const actions = {
   },
   updateConfig({ commit }, payload) {
     commit('UPDATE_CONFIG', payload);
+  },
+  reorderConfig({ commit }, payload) {
+    commit('REORDER_CONFIG', payload);
   },
   deleteConfig({ commit }, configId) {
     commit('DELETE_CONFIG', configId);

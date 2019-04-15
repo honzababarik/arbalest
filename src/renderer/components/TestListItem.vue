@@ -1,5 +1,5 @@
 <template>
-  <div class="test-list-item" :class="{'active': isActive}" @click="onClick">
+  <div class="test-list-item" :data-id="config.id" :class="{'active': isActive}" @click="onClick">
     <div class="left">
       <div class="title">{{config.name}}</div>
       <div class="subtitle">{{config.url}}</div>

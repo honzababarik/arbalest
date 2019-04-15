@@ -3,11 +3,11 @@
   <Panel :header="isCreate ? 'Create Test' : 'Edit Test'" css='panel-config'>
     <div class="form-group" :class="{'error': this.hasError('name')}">
       <label>Name</label>
-      <input type="text" v-model="config.name" placeholder="New Load Test">
+      <input type="text" v-model.trim="config.name" placeholder="New Load Test">
     </div>
     <div class="form-group" :class="{'error': this.hasError('url')}">
       <label>URL</label>
-      <input type="text" v-model="config.url" placeholder="https://google.com">
+      <input type="text" v-model.trim="config.url" placeholder="https://google.com">
     </div>
     <div class="d-flex">
       <div class="form-group right-sm" :class="{'error': this.hasError('duration')}">
@@ -25,8 +25,8 @@
     <div class="form-group" :class="{'error': this.hasError('headers')}">
       <label>Headers</label>
       <div class="d-flex bottom-sm" v-for="(header, i) in config.headers" :key="i">
-        <input class="form-control form-control-xs flex-1" type="text" v-model="header.name" placeholder="Name">
-        <input class="form-control form-control-xs flex-1 left-sm" type="text" v-model="header.value" placeholder="Value">
+        <input class="form-control form-control-xs flex-1" type="text" v-model.trim="header.name" placeholder="Name">
+        <input class="form-control form-control-xs flex-1 left-sm" type="text" v-model.trim="header.value" placeholder="Value">
         <button class="btn left-sm btn-xs" @click="onClickRemoveHeader(i)">Remove</button>
       </div>
     </div>
@@ -36,11 +36,7 @@
 
     <div class="form-group" :class="{'error': this.hasError('scenarios')}">
       <label>Scenarios</label>
-      <div class="d-flex bottom-sm" v-for="(scenario, i) in config.scenarios" :key="i">
-        <input class="form-control form-control-xs flex-1" type="text" v-model="scenario.method" placeholder="Method">
-        <input class="form-control form-control-xs flex-4 left-sm" type="text" v-model="scenario.url" placeholder="URL">
-        <button class="btn left-sm btn-xs" @click="onClickRemoveScenario(i)">Remove</button>
-      </div>
+      <Scenario  v-for="(scenario, i) in config.scenarios" :key="i" :scenario="scenario" @remove="onClickRemoveScenario" @method="onChangeScenarioMethod"></Scenario>
     </div>
     <button class="btn btn-info btn-xs" @click="onClickAddScenario">Add Scenario</button>
 
@@ -60,10 +56,12 @@
 
 <script>
   import Panel from './Panel'
+  import Scenario from './Scenario'
 
   export default {
     components: {
-      Panel
+      Panel,
+      Scenario
     },
     data: function() {
       return {
@@ -76,7 +74,6 @@
           headers: [{ name: null, value: null }],
           scenarios: [{ method: 'GET', url: '/' }],
         },
-        methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
         errors: [],
       };
     },
@@ -93,8 +90,14 @@
       onClickRemoveHeader(index) {
         this.config.headers.splice(index, 1)
       },
-      onClickRemoveScenario(index) {
-        this.config.scenarios.splice(index, 1)
+      onChangeScenarioMethod(scenario, method) {
+        scenario.method = method
+      },
+      onClickRemoveScenario(scenario) {
+        const index = this.config.scenarios.findIndex(s => s === scenario)
+        if (index !== -1) {
+          this.config.scenarios.splice(index, 1)
+        }
       },
       hasError(field) {
         return this.errors.indexOf(field) !== -1
@@ -168,6 +171,12 @@
           return scenario.method && this.$dvlt.validator.isValidURLPath(scenario.url)
         })
       },
+      onClickBody(scenario) {
+        // TODO expand body there
+      },
+      canAddBody(scenario) {
+        return scenario.method !== 'GET'
+      }
     },
     computed: {
       isCreate() {

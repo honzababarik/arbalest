@@ -1,10 +1,15 @@
 <template>
-  <div class="dropdown">
-    <button class="btn btn-transparent" @click="onClickExpand" @blur="onBlur">
-      <slot name="input"></slot>
+  <div class="dropdown" :class="css">
+    <button :class="inputCss" @click="onClickExpand">
+      <slot name="input">
+        <Icon :icon="isExpanded ? 'chevron-up' : 'chevron-down'" />
+        <span class="left-xs">{{value}}</span>
+      </slot>
     </button>
     <ul v-if="isExpanded">
-      <slot name="items"></slot>
+      <slot name="items">
+        <li v-for="(item, i) in items" @click="onClickItem(i)" :key="item">{{item}}</li>
+      </slot>
     </ul>
   </div>
 </template>
@@ -13,20 +18,31 @@
 import { setTimeout } from 'timers';
   export default {
     name: 'dropdown',
+    props: {
+      value: String,
+      css: String,
+      inputCss: {
+        type: String,
+        default: 'btn'
+      },
+      items: {
+        type: Array,
+        default: () => []
+      }
+    },
     data() {
       return {
         isExpanded: false
       }
     },
     methods: {
+      onClickItem(index) {
+        this.$emit('select', index, this.items[index]);
+        this.isExpanded = false;
+      },
       onClickExpand(e) {
         e.stopPropagation()
         this.isExpanded = !this.isExpanded;
-      },
-      onBlur() {
-        setTimeout(() => {
-          this.isExpanded = false;
-        }, 200);
       }
     }
   };
@@ -40,7 +56,12 @@ import { setTimeout } from 'timers';
   .dropdown {
     background-color: $background-color;
     cursor: pointer;
-    position: relative;
+    .input {
+      border-radius: $input-border-radius;
+      border: 1px solid $input-border-color;
+      padding: 4px 8px;
+      background-color: $input-background-color;
+    }
     ul {
       position: absolute;
       list-style-type: none;
@@ -50,7 +71,6 @@ import { setTimeout } from 'timers';
       min-width: 150px;
       max-height: 200px;
       overflow: scroll;
-      right: 0;
       border: 1px solid $input-border-color;
       border-radius: $input-border-radius;
       li {
@@ -65,6 +85,14 @@ import { setTimeout } from 'timers';
           background-color: $border-color;
         }
       }
+    }
+    &.dropdown-right {
+      ul {
+        right: 0;
+      }
+    }
+    &.dropdown-relative {
+      position: relative;
     }
   }
 

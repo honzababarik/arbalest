@@ -114,7 +114,9 @@
       }
     },
     mounted() {
-      this.$refs.terminal.scroll()
+      if (this.$refs.terminal) {
+        this.$refs.terminal.scroll()
+      }
     },
     created() {
       const params = this.$router.currentRoute.params;

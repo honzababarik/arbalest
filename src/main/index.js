@@ -10,9 +10,11 @@ const winURL = process.env.NODE_ENV === 'development' ? 'http://localhost:9080' 
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    webPreferences: {
-      webSecurity: false,
-    },
+    // webPreferences: {
+    //   allowRunningInsecureContent: false,
+    //   webSecurity: true,
+    //   allowEval: false,
+    // },
     height: 720,
     useContentSize: true,
     width: 1280,
