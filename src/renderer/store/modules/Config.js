@@ -2,15 +2,6 @@ import dvlt from '../../assets/js/core';
 import Config from '../models/Config';
 
 
-// const updateConfig = (config, newConfig) => {
-//   config.name = newConfig.name;
-//   config.url = newConfig.url;
-//   config.duration = newConfig.duration;
-//   config.rate = newConfig.rate;
-//   config.headers = newConfig.headers;
-//   config.scenarios = newConfig.scenarios;
-// };
-
 const state = {
   configs: [],
   selectedConfigId: null,

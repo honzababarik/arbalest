@@ -7,7 +7,7 @@
     </div>
     <div class="form-group" :class="{'error': this.hasError('url')}">
       <label>URL</label>
-      <input type="text" v-model.trim="config.url" placeholder="https://google.com">
+      <input type="text" v-model.trim="config.url" placeholder="https://example.com">
     </div>
     <div class="d-flex">
       <div class="form-group right-sm" :class="{'error': this.hasError('duration')}">
@@ -72,7 +72,7 @@
           duration: 10,
           rate: 1,
           headers: [{ name: null, value: null }],
-          scenarios: [{ method: 'GET', url: '/' }],
+          scenarios: [this.getNewScenario()],
         },
         errors: [],
       };
@@ -81,8 +81,17 @@
       onClickCancel() {
         this.$router.go(-1);
       },
+      getNewScenario() {
+        return {
+          method: 'GET',
+          url: '/',
+          body: null,
+          contentType: this.$dvlt.data.contentTypes[0],
+          data: []
+        }
+      },
       onClickAddScenario() {
-        this.config.scenarios.push({ method: 'GET', url: '/' })
+        this.config.scenarios.push(this.getNewScenario())
       },
       onClickAddHeader() {
         this.config.headers.push({ name: null, value: null })

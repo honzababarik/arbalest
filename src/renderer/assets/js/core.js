@@ -48,6 +48,13 @@ const dvlt = {
       return isValid && val[val.length - 1] !== '/';
     },
   },
+  data: {
+    httpMethods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+    contentTypes: [
+      'application/json',
+      'x-www-form-urlencoded',
+    ],
+  },
 };
 
 export default dvlt;
