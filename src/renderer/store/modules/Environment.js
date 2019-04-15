@@ -16,7 +16,9 @@ const mutations = {
   SELECT_ENVIRONMENT(state, id) {
     state.currentEnvironmentId = id;
   },
-  ADD_ENVIRONMENT(state, { id, name, color, variables }) {
+  ADD_ENVIRONMENT(state, {
+    id, name, color, variables,
+  }) {
     Vue.set(state.environments, id, {
       id,
       name,
@@ -24,7 +26,9 @@ const mutations = {
       variables,
     });
   },
-  EDIT_ENVIRONMENT(state, { id, name, color, variables }) {
+  EDIT_ENVIRONMENT(state, {
+    id, name, color, variables,
+  }) {
     const environment = state.environments[id];
     if (environment) {
       environment.name = name;

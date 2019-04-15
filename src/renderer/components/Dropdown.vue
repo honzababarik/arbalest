@@ -16,36 +16,36 @@
 
 <script>
 import { setTimeout } from 'timers';
-  export default {
-    name: 'dropdown',
-    props: {
-      value: String,
-      css: String,
-      inputCss: {
-        type: String,
-        default: 'btn'
-      },
-      items: {
-        type: Array,
-        default: () => []
-      }
+export default {
+  name: 'dropdown',
+  props: {
+    value: String,
+    css: String,
+    inputCss: {
+      type: String,
+      default: 'btn',
     },
-    data() {
-      return {
-        isExpanded: false
-      }
+    items: {
+      type: Array,
+      default: () => [],
     },
-    methods: {
-      onClickItem(index) {
-        this.$emit('select', index, this.items[index]);
-        this.isExpanded = false;
-      },
-      onClickExpand(e) {
-        e.stopPropagation()
-        this.isExpanded = !this.isExpanded;
-      }
-    }
-  };
+  },
+  data() {
+    return {
+      isExpanded: false,
+    };
+  },
+  methods: {
+    onClickItem(index) {
+      this.$emit('select', index, this.items[index]);
+      this.isExpanded = false;
+    },
+    onClickExpand(e) {
+      e.stopPropagation();
+      this.isExpanded = !this.isExpanded;
+    },
+  },
+};
 </script>
 
 

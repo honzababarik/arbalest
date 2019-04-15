@@ -11,10 +11,10 @@
       </div>
     </div>
     <div class="side" v-if="isExpanded">
-      <label>Content Type</label>
-      <pre>{{response.contentType}}</pre>
+      <label class="form-label">Content Type</label>
+      <pre>{{response.content_type}}</pre>
       <div v-if="response.data">
-        <label>Body</label>
+        <label class="form-label">Body</label>
         <pre>{{getData}}</pre>
       </div>
     </div>
@@ -42,18 +42,7 @@
         return JSON.parse(this.response.data);
       },
       getMethodTagCss() {
-        switch (this.response.method) {
-          case 'GET':
-            return 'success';
-          case 'POST':
-            return 'warning';
-          case 'PATCH':
-          case 'PUT':
-            return 'info';
-          case 'DELETE':
-            return 'danger';
-          default: return '';
-        }
+        return this.$dvlt.style.getMethodStyle(this.response.method)
       },
       getStatusTagCss() {
         const status = this.response.status;

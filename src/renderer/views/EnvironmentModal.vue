@@ -41,119 +41,119 @@
 
 <script>
 
-  import Modal from '@/components/Modal'
+  import Modal from '@/components/Modal';
 
   export default {
     name: 'environment',
     components: {
-      Modal
+      Modal,
     },
     props: {
       environmentId: {
         type: String,
-        default: null
-      }
+        default: null,
+      },
     },
     data() {
       return {
         environment: {
           name: 'New Environment',
           color: 'transparent',
-          variables: [{ key: null, value: null }]
+          variables: [{ key: null, value: null }],
         },
         colors: [
           '#F44336', '#E91E63', '#9C26B0', '#673AB7',
           '#3F51B5', '#2196F3', '#01A9F4', '#00BCD3',
           '#009687', '#4DAE50', '#8BC34A', '#CCDC39',
           '#FFEB3B', '#FFC106', '#FF9800', '#FF5721',
-          '#795547', '#9E9E9E', '#607D8B'
+          '#795547', '#9E9E9E', '#607D8B',
         ],
-        errors: []
-      }
+        errors: [],
+      };
     },
     methods: {
       onClickAddVariable() {
-        this.environment.variables.push({ key: null, value: null })
+        this.environment.variables.push({ key: null, value: null });
       },
       onClickRemoveVariable(index) {
-        this.environment.variables.splice(index, 1)
+        this.environment.variables.splice(index, 1);
       },
       createEnvironment(data) {
-        this.$store.dispatch('Environment/addEnvironment', data)
-        this.$dvlt.notify('Environment was created!')
-        this.close()
+        this.$store.dispatch('Environment/addEnvironment', data);
+        this.$dvlt.notify('Environment was created!');
+        this.close();
       },
       updateEnvironment(data) {
-        data.id = this.environmentId
-        this.$store.dispatch('Environment/editEnvironment', data)
-        this.$dvlt.notify('Your changes were saved!')
-        this.close()
+        data.id = this.environmentId;
+        this.$store.dispatch('Environment/editEnvironment', data);
+        this.$dvlt.notify('Your changes were saved!');
+        this.close();
       },
       hasError(field) {
         return this.errors.indexOf(field) !== -1;
       },
       isValidForm() {
-        const errors = []
+        const errors = [];
 
         if (this.environment.name.length === 0) {
-          errors.push('name')
+          errors.push('name');
         }
 
-        this.errors = errors
-        return errors.length === 0
+        this.errors = errors;
+        return errors.length === 0;
       },
       onClickSave() {
-        const environment = this.environment
+        const environment = this.environment;
         if (!this.isValidForm()) {
           return;
         }
         const data = {
           name: environment.name,
           color: environment.color,
-          variables: this.getVariables()
-        }
+          variables: this.getVariables(),
+        };
         if (this.isCreate) {
-          this.createEnvironment(data)
+          this.createEnvironment(data);
         }
         else {
-          this.updateEnvironment(data)
+          this.updateEnvironment(data);
         }
       },
       close() {
-        this.$emit('close')
+        this.$emit('close');
       },
       onClickDelete() {
         if (confirm('Are you sure you want to delete this environment?')) {
-          this.$store.dispatch('Environment/deleteEnvironment', this.environmentId)
-          this.$dvlt.notify('Environment was deleted!')
-          this.close()
+          this.$store.dispatch('Environment/deleteEnvironment', this.environmentId);
+          this.$dvlt.notify('Environment was deleted!');
+          this.close();
         }
       },
       getColorStyle(color) {
-        return `background-color: ${color}`
+        return `background-color: ${color}`;
       },
       onClickSelectColor(color) {
         this.environment.color = color;
       },
       getVariables() {
-        return this.environment.variables.filter(variable => {
-          return variable.key && variable.value
-        })
-      }
+        return this.environment.variables.filter((variable) => {
+          return variable.key && variable.value;
+        });
+      },
     },
     computed: {
       header() {
-        return this.environmentId ? `Edit: "${this.environment.name}"` : 'Create Environment'
+        return this.environmentId ? `Edit: "${this.environment.name}"` : 'Create Environment';
       },
       isCreate() {
         return this.environmentId === null;
-      }
+      },
     },
     mounted() {
       if (this.environmentId) {
-        this.environment = JSON.parse(JSON.stringify(this.$store.getters['Environment/getEnvironmentById'](this.environmentId)))
+        this.environment = JSON.parse(JSON.stringify(this.$store.getters['Environment/getEnvironmentById'](this.environmentId)));
       }
-    }
+    },
   };
 
 </script>

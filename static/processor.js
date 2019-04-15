@@ -12,7 +12,7 @@ function afterResponse(requestParams, response, context, ee, next) {
       url: requestParams.url,
       status: response.statusCode,
       time: Date.now() - context.vars.startedAt,
-      contentType,
+      content_type: contentType,
     },
   };
   if (contentType === 'application/json') {

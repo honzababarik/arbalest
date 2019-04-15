@@ -1,49 +1,74 @@
 <template>
   <Modal header='Settings' @close="$emit('close')">
     <div class="tab-body">
-      <Checkbox
+      <Switchbox
         label='SSL Certificate Verification' name='request.doesVerifySSL'
         @toggle='onToggleRequestSettings' :is-checked='settings.request.doesVerifySSL' />
+      <SettingsItem v-for="(item, i) in items" :key="i" :item="item" @change="onItemChanged" :value="getItemValue(item)" />
     </div>
   </Modal>
 </template>
 
 <script>
 
-  import Checkbox from '@/components/Checkbox'
-  import Modal from '@/components/Modal'
+  import Switchbox from '@/components/Switchbox';
+  import Modal from '@/components/Modal';
+  import SettingsItem from '@/components/SettingsItem';
 
   export default {
     name: 'settings',
     components: {
-      Checkbox,
-      Modal
+      Switchbox,
+      SettingsItem,
+      Modal,
     },
     data() {
       return {
         currentTab: 'General',
         tabs: [
-          'General'
+          'General',
+        ],
+        items: [
+          {
+            name: 'settings.request.timeout',
+            title: 'HTTP Timeout',
+            subtitle: 'Responses have to be sent within timeout or the request will be aborted',
+            placeholder: 'Unlimited',
+          },
+          {
+            name: 'settings.request.pool',
+            title: 'Connection Pool',
+            subtitle: 'All HTTP requests from all virtual users will be sent over the same connections',
+            placeholder: 'Unlimited',
+          },
         ]
-      }
+      };
     },
     methods: {
       onClickSelectTab(tab) {
-        this.currentTab = tab
+        this.currentTab = tab;
       },
       onToggleRequestSettings(name, value) {
-        const keys = name.split('.')
-        this.$store.dispatch('Settings/changeRequestSettings', {
-          key: keys[keys.length - 1],
-          value: value
-        })
+        const keys = name.split('.');
+        this.updateSettings(keys[keys.length - 1], value);
+      },
+      onItemChanged(item, value) {
+        const keys = item.name.split('.');
+        this.updateSettings(keys[keys.length - 1], value);
+      },
+      updateSettings(key, value) {
+        this.$store.dispatch('Settings/changeRequestSettings', { key, value });
+      },
+      getItemValue(item) {
+        // TODO stuff
+        return null
       }
     },
     computed: {
       settings() {
-        return this.$store.getters['Settings/getSettings']
-      }
-    }
+        return this.$store.getters['Settings/getSettings'];
+      },
+    },
   };
 
 </script>

@@ -30,47 +30,47 @@
     props: {
       items: {
         type: Object,
-        default: () => {}
+        default: () => {},
       },
       placeholder: String,
       selectedItem: Object,
       displayKey: {
         type: String,
-        value: 'id'
+        value: 'id',
       },
       idKey: {
         type: String,
-        value: 'id'
+        value: 'id',
       },
     },
     data() {
       return {
-        isExpanded: false
-      }
+        isExpanded: false,
+      };
     },
     computed: {
       getChevronIcon() {
-        return this.isExpanded ? 'chevron-up' : 'chevron-down'
+        return this.isExpanded ? 'chevron-up' : 'chevron-down';
       },
       hasItems() {
-        return Object.keys(this.items).length > 0
+        return Object.keys(this.items).length > 0;
       },
       displayItems() {
         const item = {
           name: 'No Environment',
           color: 'transparent',
-          variables: []
-        }
-        return Object.assign({ 0: item }, this.items)
-      }
+          variables: [],
+        };
+        return Object.assign({ 0: item }, this.items);
+      },
     },
     methods: {
       onClickExpand(e) {
-        e.stopPropagation()
+        e.stopPropagation();
         this.isExpanded = !this.isExpanded;
       },
       onClickItem(itemId) {
-        this.$emit('select', itemId == 0 ? null : itemId)
+        this.$emit('select', itemId == 0 ? null : itemId);
         this.isExpanded = false;
       },
       onClickEditItem(itemId, e) {
@@ -94,13 +94,13 @@
         this.isExpanded = false;
       },
       onClickInput(e) {
-        this.onClickExpand(e)
+        this.onClickExpand(e);
       },
       getItemColorStyle(item) {
         const color = item ? item.color : 'transparent';
         return `background-color: ${color}`;
-      }
-    }
+      },
+    },
   };
 </script>
 

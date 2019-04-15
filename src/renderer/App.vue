@@ -40,7 +40,8 @@
   import EnvironmentModal from './views/EnvironmentModal';
   import Artillery from './components/Artillery';
 
-  // TODO add ability to provide Body to request
+  // TODO Settings: config -> http -> timeout: 10
+  // TODO Settings: config -> http -> pool: 10
 
   // TODO show report
   // TODO show in progress stuff
@@ -49,12 +50,23 @@
   // TODO fix positioning of responses/terminal
   // TODO make it possible to readjust the rate/duration on the Config screen
 
-  // TODO test configuration more user friendly
-  // TODO explore more settings that might be useful
+  // TODO Test configuration more user friendly
 
-  // TODO create app menu + preferences
-  // TODO variable randomizer
-  // TODO folderize tests
+  // TODO Create app menu + preferences
+
+  // Next:
+  // Scenario: Capture variables
+  // Scenario: Multipart
+  // Scenario: Add Cookies
+  // Scenario: Add type Sleep
+  // Scenario: Attach Before Request script
+  // Scenario: Attach After Response script
+
+  // Variable randomizer
+  // UX: Folderize tests
+
+  // Test: History of Runs
+  // Test: Run via AWS
 
   export default {
     name: 'Arbalest',
@@ -65,42 +77,42 @@
     },
     methods: {
       onClickSettings() {
-        this.$modal.show(SettingsModal, {}, { height: 'auto' })
+        this.$modal.show(SettingsModal, {}, { height: 'auto' });
       },
       onClickSelectEnvironment(environmentId) {
-        this.$store.dispatch('Environment/selectEnvironment', environmentId)
+        this.$store.dispatch('Environment/selectEnvironment', environmentId);
       },
       onClickEditEnvironment(environmentId) {
         this.$modal.show(EnvironmentModal, {
-          environmentId
+          environmentId,
         }, {
-          height: 'auto'
-        })
+          height: 'auto',
+        });
       },
       onClickAddEnvironment() {
         this.$modal.show(EnvironmentModal, {}, {
-          height: 'auto'
-        })
+          height: 'auto',
+        });
       },
     },
     computed: {
       jobs() {
-        return this.$store.getters['Job/getJobs']
+        return this.$store.getters['Job/getJobs'];
       },
       settings() {
-        return this.$store.getters['Settings/getSettings']
+        return this.$store.getters['Settings/getSettings'];
       },
       environments() {
-        return this.$store.getters['Environment/getEnvironments']
+        return this.$store.getters['Environment/getEnvironments'];
       },
       selectedEnvironment() {
-        return this.$store.getters['Environment/getCurrentEnvironment']
+        return this.$store.getters['Environment/getCurrentEnvironment'];
       },
       getTitlebarCss() {
         const color = this.selectedEnvironment ? this.selectedEnvironment.color : '#1fd6a6';
-        return `border-bottom-color: ${color}`
-      }
-    }
+        return `border-bottom-color: ${color}`;
+      },
+    },
   };
 
 </script>
@@ -108,6 +120,12 @@
 <style lang="scss">
 
   @import "./styles/vars.scss";
+
+  @mixin form-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: $text-color-dark;
+  }
 
   body {
     font-family: 'system-font', sans-serif;
@@ -128,6 +146,10 @@
     margin-right: 10px;
   }
 
+  .form-label {
+    @include form-label;
+  }
+
   .form-group {
     display: flex;
     flex: 1;
@@ -136,13 +158,17 @@
     label {
       display: block;
       margin-bottom: 10px;
+      @include form-label;
     }
     &.error {
+      .disabled {
+        border-color: $danger-color;
+      }
       label {
         color: $danger-color;
       }
-      input[type="text"], input[type="number"] {
-        border-color: $danger-color
+      input[type="text"], input[type="number"], textarea {
+        border-color: $danger-color;
       }
     }
   }
@@ -158,6 +184,26 @@
   .form-control.form-control-xs {
     padding: 6px 8px;
     font-size: 12px;
+    line-height: 15px;
+  }
+  textarea {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+    resize: none;
+    border: 1px solid $input-border-color;
+    border-radius: $input-border-radius;
+    background-color: $input-background-color;
+    color: white;
+    font-family: Consolas, monospace;
+    white-space: pre-wrap;
+    font-size: 14px;
+    padding: 15px 10px;
+    word-break: break-all;
+    &.error {
+      border-color: $danger-color;
+    }
   }
 
   .d-flex {
@@ -208,12 +254,6 @@
 
   .no-select {
     @include no-select;
-  }
-
-  label {
-    font-size: 12px;
-    text-transform: uppercase;
-    color: $text-color-dark;
   }
 
   .text-right {

@@ -10,21 +10,21 @@
     name: 'checkbox',
     props: {
       name: {
-        type: String
+        type: String,
       },
       label: {
-        type: String
+        type: String,
       },
       isChecked: {
         type: Boolean,
-        default: false
-      }
+        default: false,
+      },
     },
     methods: {
       onChange() {
-        this.$emit('toggle', this.name, !this.isChecked)
-      }
-    }
+        this.$emit('toggle', this.name, !this.isChecked);
+      },
+    },
   };
 </script>
 

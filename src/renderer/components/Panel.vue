@@ -33,91 +33,96 @@
       isCollapsible: { type: Boolean, default: false },
       isSearchable: { type: Boolean, default: false },
     },
-    data: function() {
+    data() {
       return {
         search: {
           index: 0,
           query: null,
           matches: 0,
-          $results: []
+          $results: [],
         },
         isExpanded: true,
-        marker: null
+        marker: null,
       };
-    },
+  },
     methods: {
       onClickHeader() {
         if (!this.isCollapsible) {
-          return
+          return;
         }
         this.isExpanded = !this.isExpanded;
         if (this.isExpanded) {
-          this.scroll()
+          this.scroll();
         }
       },
       scroll() {
         if (this.$refs.body) {
           this.$nextTick(() => {
             this.$refs.body.scrollTop = this.$refs.body.scrollHeight - this.$refs.body.clientHeight;
-          })
+          });
         }
       },
       onKeyUpSearch(e) {
-        if (e.key === 'Enter') {
+        if (e.keyCode === this.$dvlt.consts.KEY_ENTER) {
           if (this.search.matches > this.search.index + 1) {
-            this.search.index++;
+            this.focusOnSearchedItem(this.search.index + 1);
           }
           else {
             this.search.index = 0;
+            this.focusOnSearchedItem(0);
           }
-          this.focusOnSearchedItem()
         }
       },
       onClickSearch(e) {
-        e.stopPropagation()
+        e.stopPropagation();
       },
       onSearchDone(count) {
-        this.search.$results = this.$refs.body.getElementsByTagName('mark')
-        this.search.matches = count
-        this.search.index = 0
-        this.focusOnSearchedItem()
+        this.search.$results = this.$refs.body.getElementsByTagName('mark');
+        this.search.matches = count;
+        this.focusOnSearchedItem(0);
       },
-      focusOnSearchedItem() {
-        const $mark = this.search.$results[this.search.index]
-        if ($mark) {
-          this.$refs.body.scrollTop = $mark.offsetTop;
+      focusOnSearchedItem(newIndex) {
+        const $previousMark = this.search.$results[this.search.index];
+        const $newMark = this.search.$results[newIndex];
+        if ($previousMark) {
+          $previousMark.classList.remove('active');
         }
+        if ($newMark) {
+          $newMark.classList.add('active');
+          this.$refs.body.scrollTop = $newMark.offsetTop;
+        }
+        this.search.index = newIndex;
       },
       markSearch(query) {
         this.marker.unmark({
           done: () => {
             this.marker.mark(query, {
               done: this.onSearchDone,
-              noMatch: () => this.onSearchDone(0)
-            })
-          }
-        })
-      }
+              noMatch: () => this.onSearchDone(0),
+            });
+          },
+        });
+      },
     },
     watch: {
-      'search.query'(newQuery, oldQuery) {
-        this.markSearch(newQuery)
-      }
+      'search.query': function (newQuery, oldQuery) {
+        this.markSearch(newQuery);
+      },
     },
     computed: {
       getCssClass() {
-        var css = this.isExpanded ? '' : 'collapsed';
+        const css = this.isExpanded ? '' : 'collapsed';
         return `${css} ${this.css}`;
       },
-      hasFooter () {
-        return !!this.$slots['footer']
-      }
+      hasFooter() {
+        return !!this.$slots.footer;
+      },
     },
     mounted() {
       if (this.isSearchable) {
         this.marker = new Mark(this.$refs.body);
       }
-    }
+    },
   };
 </script>
 
@@ -176,6 +181,14 @@
         padding: 15px 10px;
         word-break: break-all;
       }
+    }
+  }
+
+  mark {
+    border-radius: 4px;
+    padding: 0px 1px;
+    &.active {
+      background-color: $warning-color;
     }
   }
 

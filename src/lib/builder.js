@@ -1,22 +1,40 @@
-const toScenarioJSON = (scenario) => {
-  return {
-    flow: [{
-      [scenario.method]: {
-        url: scenario.url,
-        beforeRequest: 'beforeRequest',
-        afterResponse: 'afterResponse',
-      },
-    }],
+const toFlowJSON = (scenario) => {
+  const data = {
+    url: scenario.url,
+    beforeRequest: 'beforeRequest',
+    afterResponse: 'afterResponse',
   };
+  if (scenario.headers) {
+    data.headers = scenario.headers;
+  }
+  if (scenario.json) {
+    data.json = scenario.json;
+  }
+  if (scenario.form) {
+    data.form = scenario.form;
+  }
+  return {
+    [scenario.method]: data,
+  };
+};
+
+const toScenariosJSON = (scenarios) => {
+  return [
+    {
+      flow: scenarios.map(scenario => toFlowJSON(scenario)),
+    },
+  ];
 };
 
 
 class ConfigBuilder {
 
-  constructor(config, environment) {
+  constructor(config, settings, environment) {
     this.targetUrl = config.url;
     this.duration = config.duration;
     this.rate = config.rate;
+    this.timeout = settings.request.timeout || null;
+    this.pool = settings.request.pool || null;
     this.headers = {};
     this.scenarios = [];
     this.variables = {};
@@ -28,7 +46,7 @@ class ConfigBuilder {
 
     for (let i = 0; i < config.scenarios.length; i++) {
       const scenario = config.scenarios[i];
-      this.addScenario(scenario.method.toLowerCase(), scenario.url);
+      this.addScenario(scenario);
     }
 
     if (environment && environment.variables) {
@@ -50,13 +68,33 @@ class ConfigBuilder {
     return this;
   }
 
-  addScenario(method, url) {
-    this.scenarios.push({ method, url });
+  addScenario(scenario) {
+    let form = null;
+    let headers = null;
+    if (scenario.form && scenario.form.length > 0) {
+      form = {};
+      scenario.form.forEach((value) => {
+        form[value.name] = value.value;
+      });
+    }
+    if (scenario.content_type) {
+      headers = {
+        'Content-Type': scenario.content_type,
+      };
+    }
+
+    this.scenarios.push({
+      method: scenario.method.toLowerCase(),
+      headers,
+      url: scenario.url,
+      json: scenario.body || null,
+      form,
+    });
     return this;
   }
 
   toJSON() {
-    return {
+    const json = {
       config: {
         target: this.targetUrl,
         phases: [{
@@ -69,8 +107,15 @@ class ConfigBuilder {
           headers: this.headers,
         },
       },
-      scenarios: this.scenarios.map(scenario => toScenarioJSON(scenario)),
+      scenarios: toScenariosJSON(this.scenarios),
     };
+    if (this.timeout) {
+      json.config.timeout = this.timeout;
+    }
+    if (this.pool) {
+      json.config.pool = this.pool;
+    }
+    return json;
   }
 
 }

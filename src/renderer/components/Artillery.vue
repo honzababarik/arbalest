@@ -9,37 +9,37 @@
     data() {
       return {
         artillery: null,
-      }
+      };
     },
     methods: {
       run() {
-        this.artillery.run(this.config, this.settings, this.environment)
+        this.artillery.run(this.config, this.settings, this.environment);
       },
       stop() {
-        this.artillery.stop()
+        this.artillery.stop();
       },
       addLog(text, cssClass = '') {
-        console.log(text)
+        console.log(text);
         this.$store.dispatch('Job/addLog', {
           configId: this.config.id,
           log: {
             text,
             time: new Date(),
-            css: cssClass + '-color'
-          }
-        })
+            css: `${cssClass}-color`,
+          },
+        });
       },
       onRun(pid) {
-        this.addLog(`Job started: ${pid}`)
+        this.addLog(`Job started: ${pid}`);
       },
       onResponse(response) {
-        this.$store.dispatch('Job/addResponse', { configId: this.config.id, response })
+        this.$store.dispatch('Job/addResponse', { configId: this.config.id, response });
       },
       onLine(line) {
-        this.addLog(line)
+        this.addLog(line);
       },
       onError(err) {
-        this.addLog(`Err: ${err}`, 'danger')
+        this.addLog(`Err: ${err}`, 'danger');
       },
       onReport(reportPath) {
         this.addLog(`Report is available here: ${reportPath}`, 'warning');
@@ -48,36 +48,36 @@
       },
       onExit(exitCode) {
         if (exitCode === 0) {
-          this.addLog(`Test finished!`, 'success')
-          this.$dvlt.notify(`Test finished!`, 'success', {
-            title: this.config.name
-          })
+          this.addLog('Test finished!', 'success');
+          this.$dvlt.notify('Test finished!', 'success', {
+            title: this.config.name,
+          });
         }
         else {
-          this.addLog(`Test failed with code: ${exitCode}`, 'danger')
+          this.addLog(`Test failed with code: ${exitCode}`, 'danger');
           this.$dvlt.notify(`Test failed with code ${exitCode}...`, 'danger', {
-            title: this.config.name
-          })
+            title: this.config.name,
+          });
         }
-        this.$store.dispatch('Job/stopJob', this.config.id)
+        this.$store.dispatch('Job/stopJob', this.config.id);
       },
       onJobStatusChanged(isRunning, wasRunning) {
         if (!wasRunning && isRunning) {
-          this.run()
+          this.run();
         }
         if (wasRunning && !isRunning) {
-          this.stop()
+          this.stop();
         }
-      }
+      },
     },
     computed: {
       config() {
-        return this.$store.getters['Config/getConfig'](this.job.config_id)
-      }
+        return this.$store.getters['Config/getConfig'](this.job.config_id);
+      },
     },
     beforeDestroy() {
-      this.stop()
-      this.artillery.removeAllListeners()
+      this.stop();
+      this.artillery.removeAllListeners();
     },
     mounted() {
     },
@@ -88,12 +88,12 @@
         .on('line', this.onLine)
         .on('report', this.onReport)
         .on('error', this.onError)
-        .on('exit', this.onExit)
+        .on('exit', this.onExit);
 
       this.$watch('job.is_running', this.onJobStatusChanged, {
-        immediate: true
-      })
-    }
+        immediate: true,
+      });
+    },
   };
 
 </script>

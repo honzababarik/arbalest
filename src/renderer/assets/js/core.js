@@ -8,6 +8,10 @@ const dvlt = {
   },
   time: {
   },
+  consts: {
+    KEY_TAB: 9,
+    KEY_ENTER: 13,
+  },
   notify(text, type = 'success', options = {}) {
     Vue.notify({
       text,
@@ -44,8 +48,23 @@ const dvlt = {
     },
     isValidBaseURL(val) {
       const re = /(ftp|http|https|ws):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/;
-      const isValid = re.test(val);
-      return isValid && val[val.length - 1] !== '/';
+      return re.test(val);
+    },
+  },
+  style: {
+    getMethodStyle(method) {
+      switch (method) {
+        case 'GET':
+          return 'success';
+        case 'POST':
+          return 'warning';
+        case 'PATCH':
+        case 'PUT':
+          return 'info';
+        case 'DELETE':
+          return 'danger';
+        default: return '';
+      }
     },
   },
   data: {

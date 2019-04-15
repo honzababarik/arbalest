@@ -28,14 +28,14 @@
     },
     methods: {
       onClickClose() {
-        this.$emit('close')
-      }
+        this.$emit('close');
+      },
     },
     computed: {
-      hasFooter () {
-        return !!this.$slots['footer']
-      }
-    }
+      hasFooter() {
+        return !!this.$slots.footer;
+      },
+    },
   };
 </script>
 

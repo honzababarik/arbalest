@@ -26,6 +26,10 @@
       </div>
     </div>
 
+    <div class="errors" v-if="errors.length > 0">
+      <div class="error" v-for="(error, i) in errors" :class="error.type" :key="i">{{error.text}}</div>
+    </div>
+
     <div class="content">
       <Panel header='Responses' css='flex-3' ref="responses" :is-collapsible="true">
         <ResponseListItem v-for="(response, i) in displayResponses" :key="i" :response="response"></ResponseListItem>
@@ -41,12 +45,12 @@
 
 <script>
 
-  import ResponseListItem from './ResponseListItem'
+  import ResponseListItem from './ResponseListItem';
 
   export default {
     name: 'config',
     components: {
-      ResponseListItem
+      ResponseListItem,
     },
     data() {
       return {
@@ -57,72 +61,82 @@
     },
     methods: {
       onClickClear() {
-        this.clear()
+        this.clear();
       },
       clear() {
-        console.clear()
-        this.$store.dispatch('Job/clearJob', this.config.id)
+        console.clear();
+        this.$store.dispatch('Job/clearJob', this.config.id);
       },
       onClickStop() {
-        this.$store.dispatch('Job/stopJob', this.config.id)
+        this.$store.dispatch('Job/stopJob', this.config.id);
       },
       async onClickRun() {
-        this.clear()
-        this.$store.dispatch('Job/startJob', this.config.id)
+        this.clear();
+        this.$store.dispatch('Job/startJob', this.config.id);
       },
       onClickEdit() {
-        this.$router.push({ name: 'test-edit', params: { config_id: this.config.id }})
+        this.$router.push({ name: 'test-edit', params: { config_id: this.config.id } });
       },
       getDisplayLog(log) {
         const time = log.time.toLocaleString();
-        return `[${time}] ${log.text}`
+        return `[${time}] ${log.text}`;
       },
       onClickDelete() {
+        if (this.isRunning) {
+          this.$dvlt.notify("You cannot delete the test while it's running. Stop the test first and delete it afterwards.", 'warn')
+          return
+        }
         if (confirm('Are you sure you want to delete this test?')) {
-          this.$router.push({ name: 'home' })
-          this.$store.dispatch('Config/deleteConfig', this.config.id)
-          // TODO should make sure the jobs not running
+          this.$router.push({ name: 'home' });
+          this.$store.dispatch('Config/deleteConfig', this.config.id);
         }
       }
     },
     watch: {
-      'job.responses'(is, was) {
-        this.$refs.responses.scroll()
+      'job.responses': function (is, was) {
+        this.$refs.responses.scroll();
       },
-      'job.logs'(is, was) {
-        this.$refs.terminal.scroll()
+      'job.logs': function (is, was) {
+        this.$refs.terminal.scroll();
       },
     },
     computed: {
       job() {
-        return this.config ? this.$store.getters['Job/getJobByConfigId'](this.config.id) : null
+        return this.config ? this.$store.getters['Job/getJobByConfigId'](this.config.id) : null;
       },
       settings() {
-        return this.$store.getters['Settings/getSettings']
+        return this.$store.getters['Settings/getSettings'];
       },
       environment() {
-        return this.$store.getters['Environment/getCurrentEnvironment']
+        return this.$store.getters['Environment/getCurrentEnvironment'];
       },
       isRunning() {
-        return this.job && this.job.is_running
+        return this.job && this.job.is_running;
       },
       displayResponses() {
-        return this.job ? this.job.responses : []
+        return this.job ? this.job.responses : [];
       },
       displayLogs() {
-        return this.job ? this.job.logs : []
+        return this.job ? this.job.logs : [];
+      },
+      errors() {
+        const errors = []
+        if (this.config.scenarios.length === 0) {
+          errors.push({ text: "Test is missing scenarios. Running this test won't produce any results.", type: 'danger' })
+        }
+        return errors;
       }
     },
     mounted() {
       if (this.$refs.terminal) {
-        this.$refs.terminal.scroll()
+        this.$refs.terminal.scroll();
       }
     },
     created() {
       const params = this.$router.currentRoute.params;
-      this.configId = params['config_id']
+      this.configId = params.config_id;
       this.config = this.$store.getters['Config/getConfig'](this.configId);
-    }
+    },
   };
 
 </script>
@@ -159,6 +173,17 @@
     .menu {
       display: flex;
       height: inherit;
+    }
+  }
+
+  .errors {
+    .error {
+      color: white;
+      padding: 15px 10px;
+      &.danger {
+        font-size: 13px;
+        background-color: $danger-color;
+      }
     }
   }
 

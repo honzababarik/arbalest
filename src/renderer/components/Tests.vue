@@ -27,110 +27,110 @@
 
 <script>
 
-  const { dialog } = require('electron').remote
+import router from '@/router/';
+import TestListItem from './TestListItem';
+import Dropdown from './Dropdown';
+import Storage from '@/../lib/storage';
+import Config from '@/store/models/Config';
+import { mapGetters } from 'vuex';
+import draggable from 'vuedraggable';
 
-  import router from '@/router/';
-  import TestListItem from './TestListItem'
-  import Dropdown from './Dropdown'
-  import Storage from '@/../lib/storage'
-  import Config from '@/store/models/Config'
-  import { mapGetters } from 'vuex'
-  import draggable from 'vuedraggable'
+const { dialog } = require('electron').remote;
 
-  export default {
-    name: 'configs',
-    components: {
-      TestListItem,
-      Dropdown,
-      draggable
+export default {
+  name: 'configs',
+  components: {
+    TestListItem,
+    Dropdown,
+    draggable,
+  },
+  data() {
+    return {
+      dropdownItems: ['Import', 'Export'],
+    };
+  },
+  methods: {
+    onClickImport() {
+      dialog.showOpenDialog({
+        title: 'Import Tests...',
+        buttonLabel: 'Import',
+        filters: [
+          { name: 'Arbalest File', extensions: ['json'] },
+          { name: 'All Files', extensions: ['*'] },
+        ],
+      }, this.onImportFileSelected);
     },
-    data() {
-      return {
-        dropdownItems: ['Import', 'Export']
+    onClickExport() {
+      const time = this.$dvlt.string.replaceAll(Date().toLocaleString(), ' ', '_');
+      dialog.showSaveDialog({
+        title: 'Export Tests...',
+        message: 'Export',
+        defaultPath: `arbalest-tests_${time}.json`,
+        properties: ['createDirectory'],
+        buttonLabel: 'Export',
+      }, this.onExportFileSelected);
+    },
+    async onImportFileSelected(filePaths) {
+      if (!filePaths || filePaths.length === 0) {
+        return;
+      }
+      try {
+        const configs = await new Storage().importConfigs(filePaths[0]);
+        this.$store.dispatch('Config/importConfigs', configs);
+        this.$dvlt.notify('Importing...');
+      }
+      catch (err) {
+        console.warn(`Import failed: ${err}`, 'danger');
       }
     },
-    methods: {
-      onClickImport() {
-        dialog.showOpenDialog({
-          title: 'Import Tests...',
-          buttonLabel: 'Import',
-          filters: [
-            { name: 'Arbalest File', extensions: ['json'] },
-            { name: 'All Files', extensions: ['*'] }
-          ]
-        }, this.onImportFileSelected)
-      },
-      onClickExport() {
-        const time = this.$dvlt.string.replaceAll(Date().toLocaleString(), ' ', '_');
-        dialog.showSaveDialog({
-          title: 'Export Tests...',
-          message: 'Export',
-          defaultPath: `arbalest-tests_${time}.json`,
-          properties: ['createDirectory'],
-          buttonLabel: 'Export'
-        }, this.onExportFileSelected)
-      },
-      async onImportFileSelected(filePaths) {
-        if (!filePaths || filePaths.length === 0) {
-          return;
-        }
-        try {
-          const configs = await new Storage().importConfigs(filePaths[0])
-          this.$store.dispatch('Config/importConfigs', configs)
-          this.$dvlt.notify(`Importing...`)
-        }
-        catch (err) {
-          console.warn(`Import failed: ${err}`, 'danger')
-        }
-      },
-      async onExportFileSelected(filePath) {
-        try {
-          const configs = this.configs.map(config => new Config(config).toJSON())
-          await new Storage().exportConfigs(filePath, configs)
-          this.$dvlt.notify(`Your tests were exported to: ${filePath}!`)
-        }
-        catch (err) {
-          console.warn(`Export failed: ${err}`, 'danger')
-        }
-      },
-      onDropdownSelected(index) {
-        switch (index) {
-          case 0: this.onClickImport(); break;
-          case 1: this.onClickExport(); break;
-        }
-      },
-      onStopDragging(e) {
-        this.$store.dispatch('Config/reorderConfig', {
-          oldIndex: e.oldIndex,
-          newIndex: e.newIndex
-        })
-      },
-      onClickAdd() {
-        this.$store.dispatch('Config/selectConfig', null)
-        this.$router.push({ name: 'test-create' })
-      },
-      onClickConfig(config) {
-        this.$store.dispatch('Config/selectConfig', config.id)
-        this.$router.push({ name: 'test', params: { config_id: config.id } })
-      },
-      onClickRunConfig(config) {
-        this.$store.dispatch('Config/selectConfig', config.id)
-        this.$router.push({ name: 'test', params: { config_id: config.id } })
-        this.$store.dispatch('Job/startJob', config.id)
-      },
-      onClickStopConfig(config) {
-        this.$store.dispatch('Config/selectConfig', config.id)
-        this.$router.push({ name: 'test', params: { config_id: config.id } })
-        this.$store.dispatch('Job/stopJob', config.id)
+    async onExportFileSelected(filePath) {
+      try {
+        const configs = this.configs.map(config => new Config(config).toJSON());
+        await new Storage().exportConfigs(filePath, configs);
+        this.$dvlt.notify(`Your tests were exported to: ${filePath}!`);
+      }
+      catch (err) {
+        console.warn(`Export failed: ${err}`, 'danger');
       }
     },
-    computed: {
-      ...mapGetters({
-        configs: 'Config/getConfigs',
-        selectedConfigId: 'Config/getSelectedConfigId'
-      })
-    }
-  };
+    onDropdownSelected(index) {
+      switch (index) {
+        case 0: this.onClickImport(); break;
+        case 1: this.onClickExport(); break;
+      }
+    },
+    onStopDragging(e) {
+      this.$store.dispatch('Config/reorderConfig', {
+        oldIndex: e.oldIndex,
+        newIndex: e.newIndex,
+      });
+    },
+    onClickAdd() {
+      this.$store.dispatch('Config/selectConfig', null);
+      this.$router.push({ name: 'test-create' });
+    },
+    onClickConfig(config) {
+      this.$store.dispatch('Config/selectConfig', config.id);
+      this.$router.push({ name: 'test', params: { config_id: config.id } });
+    },
+    onClickRunConfig(config) {
+      this.$store.dispatch('Config/selectConfig', config.id);
+      this.$router.push({ name: 'test', params: { config_id: config.id } });
+      this.$store.dispatch('Job/startJob', config.id);
+    },
+    onClickStopConfig(config) {
+      this.$store.dispatch('Config/selectConfig', config.id);
+      this.$router.push({ name: 'test', params: { config_id: config.id } });
+      this.$store.dispatch('Job/stopJob', config.id);
+    },
+  },
+  computed: {
+    ...mapGetters({
+      configs: 'Config/getConfigs',
+      selectedConfigId: 'Config/getSelectedConfigId',
+    }),
+  },
+};
 
 </script>
 

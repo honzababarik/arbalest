@@ -14,7 +14,7 @@ class Artillery extends Observable {
   }
 
   async run(config, settings, environment = null) {
-    const artilleryConfig = new ConfigBuilder(config, environment);
+    const artilleryConfig = new ConfigBuilder(config, settings, environment);
     const configPath = await new Storage().createTempJSON(artilleryConfig.toJSON());
     this.emit('line', `Configuration stored under: ${configPath}`);
 

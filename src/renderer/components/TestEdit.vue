@@ -36,7 +36,9 @@
 
     <div class="form-group" :class="{'error': this.hasError('scenarios')}">
       <label>Scenarios</label>
-      <Scenario  v-for="(scenario, i) in config.scenarios" :key="i" :scenario="scenario" @remove="onClickRemoveScenario" @method="onChangeScenarioMethod"></Scenario>
+      <ScenarioListItem
+        v-for="(scenario, i) in config.scenarios" :key="i" :scenario="scenario" :base-url="config.url"
+        @remove="onClickRemoveScenario" @edit="onClickEditScenario" />
     </div>
     <button class="btn btn-info btn-xs" @click="onClickAddScenario">Add Scenario</button>
 
@@ -55,20 +57,21 @@
 </template>
 
 <script>
-  import Panel from './Panel'
-  import Scenario from './Scenario'
+  import Panel from './Panel';
+  import ScenarioListItem from './ScenarioListItem';
+  import ScenarioModal from '../views/ScenarioModal';
 
   export default {
     components: {
       Panel,
-      Scenario
+      ScenarioListItem,
     },
-    data: function() {
+    data() {
       return {
         configId: null,
         config: {
           name: `New Test [${Math.floor(Math.random() * 1000)}]`,
-          url: 'https://google.com',
+          url: null,
           duration: 10,
           rate: 1,
           headers: [{ name: null, value: null }],
@@ -76,7 +79,7 @@
         },
         errors: [],
       };
-    },
+  },
     methods: {
       onClickCancel() {
         this.$router.go(-1);
@@ -86,58 +89,74 @@
           method: 'GET',
           url: '/',
           body: null,
-          contentType: this.$dvlt.data.contentTypes[0],
-          data: []
-        }
+          content_type: this.$dvlt.data.contentTypes[0],
+          data: [],
+        };
       },
       onClickAddScenario() {
-        this.config.scenarios.push(this.getNewScenario())
+        this.$modal.show(ScenarioModal, {
+          baseUrl: this.config.url,
+          onSaved: this.onScenarioAdded
+        }, { height: 'auto' })
       },
-      onClickAddHeader() {
-        this.config.headers.push({ name: null, value: null })
+      onScenarioAdded(scenario) {
+        this.config.scenarios.push(scenario)
       },
-      onClickRemoveHeader(index) {
-        this.config.headers.splice(index, 1)
-      },
-      onChangeScenarioMethod(scenario, method) {
-        scenario.method = method
-      },
-      onClickRemoveScenario(scenario) {
+      onScenarioEdited(newScenario, scenario) {
         const index = this.config.scenarios.findIndex(s => s === scenario)
         if (index !== -1) {
-          this.config.scenarios.splice(index, 1)
+          this.config.scenarios[index] = newScenario
+        }
+      },
+      onClickEditScenario(scenario) {
+        this.$modal.show(ScenarioModal, {
+          baseUrl: this.config.url,
+          onSaved: this.onScenarioEdited,
+          editedScenario: scenario
+        }, { height: 'auto' })
+      },
+      onClickAddHeader() {
+        this.config.headers.push({ name: null, value: null });
+      },
+      onClickRemoveHeader(index) {
+        this.config.headers.splice(index, 1);
+      },
+      onChangeScenarioMethod(scenario, method) {
+        scenario.method = method;
+      },
+      onClickRemoveScenario(scenario) {
+        const index = this.config.scenarios.findIndex(s => s === scenario);
+        if (index !== -1) {
+          this.config.scenarios.splice(index, 1);
         }
       },
       hasError(field) {
-        return this.errors.indexOf(field) !== -1
+        return this.errors.indexOf(field) !== -1;
       },
       isValidForm() {
-        const errors = []
+        const errors = [];
         if (this.config.name.length === 0) {
-          errors.push('name')
+          errors.push('name');
         }
         if (!this.$dvlt.validator.isValidBaseURL(this.config.url)) {
-          errors.push('url')
+          errors.push('url');
         }
         if (this.config.duration < 1) {
-          errors.push('duration')
+          errors.push('duration');
         }
         if (this.config.rate < 1) {
-          errors.push('rate')
-        }
-        if (this.getScenarios().length === 0) {
-          errors.push('scenarios')
+          errors.push('rate');
         }
 
-        this.errors = errors
-        return errors.length === 0
+        this.errors = errors;
+        return errors.length === 0;
       },
       onClickSave() {
         if (!this.isValidForm()) {
           return;
         }
 
-        let config = this.config
+        const config = this.config;
         const data = {
           id: config.id,
           name: config.name,
@@ -145,8 +164,8 @@
           duration: config.duration,
           rate: config.rate,
           headers: this.getHeaders(),
-          scenarios: this.getScenarios()
-        }
+          scenarios: this.getScenarios(),
+        };
 
         if (this.isCreate) {
           data.id = this.$dvlt.utils.guid();
@@ -158,41 +177,41 @@
           this.updateConfig(data);
         }
 
-        this.$store.dispatch('Config/selectConfig', data.id)
-        this.$router.push({ name: 'test', params: { config_id: data.id } })
+        this.$store.dispatch('Config/selectConfig', data.id);
+        this.$router.push({ name: 'test', params: { config_id: data.id } });
       },
       createConfig(data) {
-        this.$store.dispatch('Config/addConfig', data)
+        this.$store.dispatch('Config/addConfig', data);
       },
       updateConfig(data) {
         this.$store.dispatch('Config/updateConfig', {
           id: this.configId,
-          data: data
-        })
+          data,
+        });
       },
       getHeaders() {
-        return this.config.headers.filter(header => {
-          return header.name && header.value
-        })
+        return this.config.headers.filter((header) => {
+          return header.name && header.value;
+        });
       },
       getScenarios() {
-        return this.config.scenarios.filter(scenario => {
-          return scenario.method && this.$dvlt.validator.isValidURLPath(scenario.url)
-        })
-      }
+        return this.config.scenarios.filter((scenario) => {
+          return scenario.method && this.$dvlt.validator.isValidURLPath(scenario.url);
+        });
+      },
     },
     computed: {
       isCreate() {
-        return this.configId === null
-      }
+        return this.configId === null;
+      },
     },
     mounted() {
-      const configId = this.$router.currentRoute.params['config_id'];
+      const configId = this.$router.currentRoute.params.config_id;
       if (configId) {
         this.configId = configId;
         this.config = JSON.parse(JSON.stringify(this.$store.getters['Config/getConfig'](configId)));
       }
-    }
+    },
   };
 </script>
 

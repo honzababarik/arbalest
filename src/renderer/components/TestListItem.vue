@@ -24,28 +24,28 @@
       config: Object,
       isActive: {
         type: Boolean,
-        default: false
-      }
+        default: false,
+      },
     },
     methods: {
       onClick() {
-        this.$emit('click', this.config)
+        this.$emit('click', this.config);
       },
       onClickRun() {
-        this.$emit('run', this.config)
+        this.$emit('run', this.config);
       },
       onClickStop() {
-        this.$emit('stop', this.config)
+        this.$emit('stop', this.config);
       },
     },
     computed: {
       job() {
-        return this.$store.getters['Job/getJobByConfigId'](this.config.id)
+        return this.$store.getters['Job/getJobByConfigId'](this.config.id);
       },
       isRunning() {
-        return this.job && this.job.is_running
-      }
-    }
+        return this.job && this.job.is_running;
+      },
+    },
   };
 </script>
 
