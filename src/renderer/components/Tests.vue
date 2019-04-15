@@ -27,9 +27,13 @@
 
 <script>
 
+  const { dialog } = require('electron').remote
+
   import router from '@/router/';
   import TestListItem from './TestListItem'
   import Dropdown from './Dropdown'
+  import Storage from '@/../lib/storage'
+  import Config from '@/store/models/Config'
   import { mapGetters } from 'vuex'
   import draggable from 'vuedraggable'
 
@@ -47,10 +51,47 @@
     },
     methods: {
       onClickImport() {
-        // TODO import configs in JSON
+        dialog.showOpenDialog({
+          title: 'Import Tests...',
+          buttonLabel: 'Import',
+          filters: [
+            { name: 'Arbalest File', extensions: ['json'] },
+            { name: 'All Files', extensions: ['*'] }
+          ]
+        }, this.onImportFileSelected)
       },
       onClickExport() {
-        // TODO export configs to JSON
+        const time = this.$dvlt.string.replaceAll(Date().toLocaleString(), ' ', '_');
+        dialog.showSaveDialog({
+          title: 'Export Tests...',
+          message: 'Export',
+          defaultPath: `arbalest-tests_${time}.json`,
+          properties: ['createDirectory'],
+          buttonLabel: 'Export'
+        }, this.onExportFileSelected)
+      },
+      async onImportFileSelected(filePaths) {
+        if (!filePaths || filePaths.length === 0) {
+          return;
+        }
+        try {
+          const configs = await new Storage().importConfigs(filePaths[0])
+          this.$store.dispatch('Config/importConfigs', configs)
+          this.$dvlt.notify(`Importing...`)
+        }
+        catch (err) {
+          console.warn(`Import failed: ${err}`, 'danger')
+        }
+      },
+      async onExportFileSelected(filePath) {
+        try {
+          const configs = this.configs.map(config => new Config(config).toJSON())
+          await new Storage().exportConfigs(filePath, configs)
+          this.$dvlt.notify(`Your tests were exported to: ${filePath}!`)
+        }
+        catch (err) {
+          console.warn(`Export failed: ${err}`, 'danger')
+        }
       },
       onDropdownSelected(index) {
         switch (index) {

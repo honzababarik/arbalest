@@ -1,6 +1,15 @@
-const moveElement = (arr, oldIndex, newIndex) => {
-  arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0]);
-};
+import dvlt from '../../assets/js/core';
+import Config from '../models/Config';
+
+
+// const updateConfig = (config, newConfig) => {
+//   config.name = newConfig.name;
+//   config.url = newConfig.url;
+//   config.duration = newConfig.duration;
+//   config.rate = newConfig.rate;
+//   config.headers = newConfig.headers;
+//   config.scenarios = newConfig.scenarios;
+// };
 
 const state = {
   configs: [],
@@ -36,7 +45,32 @@ const mutations = {
     if (oldIndex === newIndex) {
       return;
     }
-    moveElement(state.configs, oldIndex, newIndex);
+    dvlt.array.moveElement(state.configs, oldIndex, newIndex);
+  },
+  IMPORT_CONFIGS(state, configs) {
+    for (let i = 0; i < configs.length; i++) {
+      const data = configs[i];
+      if (!data.id) {
+        continue;
+      }
+
+      let newConfig;
+      try {
+        newConfig = new Config(data);
+      }
+      catch (err) {
+        console.log(`Error parsing file: ${err}`);
+        continue;
+      }
+
+      const existingConfig = state.configs.find(c => c.id === data.id);
+      if (existingConfig) {
+        newConfig.mergeTo(existingConfig);
+      }
+      else {
+        state.configs.push(newConfig.toJSON());
+      }
+    }
   },
 };
 
@@ -55,6 +89,9 @@ const actions = {
   },
   selectConfig({ commit }, configId) {
     commit('SELECT_CONFIG', configId);
+  },
+  importConfigs({ commit }, configs) {
+    commit('IMPORT_CONFIGS', configs);
   },
 };
 

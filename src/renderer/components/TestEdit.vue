@@ -170,12 +170,6 @@
         return this.config.scenarios.filter(scenario => {
           return scenario.method && this.$dvlt.validator.isValidURLPath(scenario.url)
         })
-      },
-      onClickBody(scenario) {
-        // TODO expand body there
-      },
-      canAddBody(scenario) {
-        return scenario.method !== 'GET'
       }
     },
     computed: {

@@ -15,13 +15,13 @@ class Artillery extends Observable {
 
   async run(config, settings, environment = null) {
     const artilleryConfig = new ConfigBuilder(config, environment);
-    const configPath = await new Storage().createTempJson(artilleryConfig.toJSON());
+    const configPath = await new Storage().createTempJSON(artilleryConfig.toJSON());
     this.emit('line', `Configuration stored under: ${configPath}`);
 
     this.configPath = configPath;
     this.reportPath = `${configPath}-report.json`;
 
-    const args = ['run', this.configPath, '-o', this.reportPath]
+    const args = ['run', this.configPath, '-o', this.reportPath];
 
     if (!settings.request.doesVerifySSL) {
       args.push('-k');

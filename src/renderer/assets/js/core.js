@@ -28,8 +28,15 @@ const dvlt = {
       return `${s4()}${s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`;
     },
   },
+  array: {
+    moveElement(arr, oldIndex, newIndex) {
+      arr.splice(newIndex, 0, arr.splice(oldIndex, 1)[0]);
+    },
+  },
   string: {
-
+    replaceAll(str, search, replacement) {
+      return str.replace(new RegExp(search, 'g'), replacement);
+    },
   },
   validator: {
     isValidURLPath(val) {
