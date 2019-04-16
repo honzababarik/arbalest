@@ -20,7 +20,13 @@ $tooltip-background-color: rgba(64, 64, 64, 1);
 
 $border-color: rgba(64, 64, 64, 1);
 $background-color: rgba(40, 40, 40, 1);
+$background-color-light: rgba(64, 64, 64, 1);
 $list-item-border-color: rgba(40, 40, 40, 1);
+
+$border-radius: 4px;
+
+$progress-background-color: rgba(40, 40, 40, 1);
+$progress-color: $success-color;
 
 $gray-color: rgba(48, 48, 48, 1);
 
@@ -31,6 +37,7 @@ $active-color: orange;
 $disabled-color: #B8B8B8;
 $disabled-background-color: #DDDDDD;
 $button-color: rgba(48, 48, 48, 1);
+$button-hover-color: rgba(64, 64, 64, 1);
 $list-item-color: rgba(48, 48, 48, 1);
 
 $input-border-color: rgba(64, 64, 64, 1);

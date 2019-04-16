@@ -47,7 +47,7 @@
     methods: {
       getItemKey(item) {
         const keys = item.name.split('.');
-        return keys[keys.length - 1]
+        return keys[keys.length - 1];
       },
       onClickSelectTab(tab) {
         this.currentTab = tab;
@@ -60,7 +60,7 @@
         this.updateSettings(this.getItemKey(item), value);
       },
       updateSettings(key, value) {
-        this.$dvlt.notify('Your settings were updated!')
+        this.$dvlt.notify('Your settings were updated!');
         this.$store.dispatch('Settings/changeRequestSettings', { key, value });
       },
       getItemValue(item) {

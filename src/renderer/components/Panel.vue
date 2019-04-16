@@ -136,17 +136,21 @@
     overflow: auto;
     flex-direction: column;
     .panel-header {
+      border-top-left-radius: $border-radius;
+      border-top-right-radius: $border-radius;
       cursor: pointer;
       font-size: 12px;
-      border-top: 1px solid $border-color;
-      border-bottom: 1px solid $border-color;
-      padding: 15px 10px 15px 10px;
+      border-bottom: 2px solid $theme-color;
+      padding: 10px;
       text-transform: uppercase;
       background-color: $panel-header-color;
     }
     .panel-body {
+      flex: 1;
       overflow: scroll;
       background-color: $panel-body-color;
+      border-bottom-left-radius: $border-radius;
+      border-bottom-right-radius: $border-radius;
     }
     .panel-footer {
       display: flex;
@@ -160,9 +164,6 @@
         padding: 8px 12px;
         font-size: 13px;
       }
-    }
-    & + .panel {
-      border-left: 1px solid $border-color;
     }
     &.collapsed {
       flex: initial !important;

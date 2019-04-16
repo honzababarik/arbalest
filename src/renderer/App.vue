@@ -137,12 +137,25 @@
     display: inline-block;
     border-left: 1px solid $border-color;
     height: 100%;
-    margin-left: 10px;
-    margin-right: 10px;
+    .side-sm {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
   }
 
   .form-label {
     @include form-label;
+  }
+
+  .progress {
+    height: 10px;
+    background-color: $progress-background-color;
+    border-top: 1px solid $border-color;
+    padding: 2px;
+    .value {
+      height: inherit;
+      background-color: $progress-color;
+    }
   }
 
   .form-group {

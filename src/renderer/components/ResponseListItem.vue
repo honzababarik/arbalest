@@ -86,12 +86,14 @@
       display: flex;
       flex-direction: row;
       align-items: center;
+      flex: 1;
+      overflow: hidden;
     }
     .tag {
       margin-right: 10px;
     }
     .url {
-      font-size: 14px;
+      font-size: 13px;
     }
     .time {
       color: $text-color-dark;

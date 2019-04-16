@@ -41,8 +41,8 @@
       },
     },
     mounted() {
-      this.currentValue = this.value
-    }
+      this.currentValue = this.value;
+    },
   };
 
 </script>

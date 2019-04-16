@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper" v-if="config">
+  <div class="test" v-if="config">
 
     <div class="navbar">
       <div>
@@ -33,15 +33,27 @@
       <div class="error" v-for="(error, i) in errors" :class="error.type" :key="i">{{error.text}}</div>
     </div>
 
-    <div class="content">
-      <Panel header='Responses' css='flex-3' ref="responses" :is-collapsible="true">
-        <ResponseListItem v-for="(response, i) in displayResponses" :key="i" :response="response"></ResponseListItem>
-      </Panel>
-
-      <Panel header='Terminal' css='panel-terminal' ref="terminal" :is-collapsible="true" :is-searchable="true">
-        <div v-for="(log, i) in displayLogs" :key="i" :class="log.css" slot="default">{{getDisplayLog(log)}}</div>
-      </Panel>
+    <div class="progress" v-if="isRunning">
+      <div class="value" :style="getProgressStyle"></div>
     </div>
+
+    <div class="content">
+      <div class="row">
+        <Panel header='Responses' ref="responses">
+          <ResponseListItem v-for="(response, i) in displayResponses" :key="i" :response="response"></ResponseListItem>
+        </Panel>
+        <Panel header='Latency'>
+          <ApexCharts
+            :series="[{ data: [23, 34, 12, 54, 32, 43] }]"
+
+            />
+        </Panel>
+      </div>
+    </div>
+
+    <Panel header='Terminal' css='panel-terminal' ref="terminal" :is-collapsible="true" :is-searchable="true">
+      <div v-for="(log, i) in displayLogs" :key="i" :class="log.css" slot="default">{{getDisplayLog(log)}}</div>
+    </Panel>
 
   </div>
 </template>
@@ -49,11 +61,13 @@
 <script>
 
   import ResponseListItem from './ResponseListItem';
+  import ApexCharts from 'apexcharts'
 
   export default {
     name: 'config',
     components: {
       ResponseListItem,
+      ApexCharts
     },
     data() {
       return {
@@ -132,6 +146,11 @@
         }
         return errors;
       },
+      getProgressStyle() {
+        // TODO calculate
+        const progress = 25;
+        return `width: ${progress}%`;
+      },
     },
     mounted() {
       if (this.$refs.terminal) {
@@ -151,19 +170,20 @@
 
   @import "../styles/vars.scss";
 
-  .wrapper {
+  .test {
     flex: 1;
     display: flex;
     flex-direction: column;
     height: 100vh;
   }
 
+  $navbar-height: 64px;
   .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 75px;
-    padding: 0 10px;
+    height: $navbar-height;
+    padding-left: 10px;
     h1 {
       font-size: 16px;
       margin: 0 0 4px 0;
@@ -180,6 +200,16 @@
       display: flex;
       height: inherit;
     }
+    button {
+      height: inherit;
+      width: $navbar-height;
+      padding: 18px 18px;
+      border-radius: 0;
+      &:hover {
+        background-color: $button-hover-color;
+      }
+    }
+
   }
 
   .errors {
@@ -196,17 +226,19 @@
   .content {
     display: flex;
     flex-direction: column;
-    flex: 1;
+    flex: 2;
+    padding: 15px;
+    background-color: $background-color-light;
   }
 
-  .panels {
-    flex: 3;
+  .row {
     display: flex;
-    overflow: hidden;
-  }
-
-  button {
-    padding: 18px 18px;
+    flex: 1;
+    .panel {
+      & + .panel {
+        margin-left: 10px;
+      }
+    }
   }
 
 </style>
