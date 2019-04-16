@@ -4,7 +4,7 @@
       <div class="title">{{item.title}}</div>
       <div class="subtitle">{{item.subtitle}}</div>
     </div>
-    <div class="form-group">
+    <div class="form-group" :class="{'error': hasError('value')}">
       <input class="form-control form-control-xs" type="number" :placeholder="item.placeholder" v-model.number="currentValue" @change="onChange">
     </div>
   </div>
@@ -16,31 +16,33 @@
     props: ['item', 'value'],
     data() {
       return {
+        errors: [],
         currentValue: null,
       };
     },
-    watch: {
-      value(newVal, oldVal) {
-        this.currentValue = newVal;
-      },
-    },
     methods: {
+      hasError(field) {
+        return this.errors.indexOf(field) !== -1;
+      },
       isValidForm() {
         const errors = [];
         // Could use better validation, values should be configurable
-        if (this.currentValue < 1) {
+        if (this.currentValue && this.currentValue < 1) {
           errors.push('value');
         }
+        this.errors = errors;
         return errors.length === 0;
       },
       onChange() {
         if (!this.isValidForm()) {
           return;
         }
-        console.log('Changed!');
         this.$emit('change', this.item, this.currentValue);
       },
     },
+    mounted() {
+      this.currentValue = this.value
+    }
   };
 
 </script>

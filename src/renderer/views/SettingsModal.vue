@@ -30,13 +30,13 @@
         ],
         items: [
           {
-            name: 'settings.request.timeout',
+            name: 'request.timeout',
             title: 'HTTP Timeout',
             subtitle: 'Responses have to be sent within timeout or the request will be aborted',
             placeholder: 'Unlimited',
           },
           {
-            name: 'settings.request.pool',
+            name: 'request.pool',
             title: 'Connection Pool',
             subtitle: 'All HTTP requests from all virtual users will be sent over the same connections',
             placeholder: 'Unlimited',
@@ -45,6 +45,10 @@
       };
     },
     methods: {
+      getItemKey(item) {
+        const keys = item.name.split('.');
+        return keys[keys.length - 1]
+      },
       onClickSelectTab(tab) {
         this.currentTab = tab;
       },
@@ -53,15 +57,13 @@
         this.updateSettings(keys[keys.length - 1], value);
       },
       onItemChanged(item, value) {
-        const keys = item.name.split('.');
-        this.updateSettings(keys[keys.length - 1], value);
+        this.updateSettings(this.getItemKey(item), value);
       },
       updateSettings(key, value) {
         this.$store.dispatch('Settings/changeRequestSettings', { key, value });
       },
       getItemValue(item) {
-        // TODO stuff
-        return null;
+        return this.settings.request[this.getItemKey(item)];
       },
     },
     computed: {

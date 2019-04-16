@@ -46,7 +46,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     .switch {
       position: relative;
       display: inline-block;

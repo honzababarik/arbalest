@@ -40,9 +40,6 @@
   import EnvironmentModal from './views/EnvironmentModal';
   import Artillery from './components/Artillery';
 
-  // TODO Settings: config -> http -> timeout: 10
-  // TODO Settings: config -> http -> pool: 10
-
   // TODO show report
   // TODO show in progress stuff
   // TODO show CPU/mem usage
