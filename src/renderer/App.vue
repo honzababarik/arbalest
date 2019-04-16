@@ -40,8 +40,15 @@
   import EnvironmentModal from './views/EnvironmentModal';
   import Artillery from './components/Artillery';
 
-  // TODO show report
-  // TODO show in progress stuff
+  // TODO show latency graph (min, med, max, p99, p95)
+  // TODO process report
+
+  // TODO show elapsed time
+  // TODO show remaining time guess
+
+  // TODO show progress on Test
+  // TODO show progres on Test Item
+
   // TODO show CPU/mem usage
 
   // TODO fix positioning of responses/terminal
@@ -227,11 +234,16 @@
   .flex-4 { flex: 4 }
 
   .right-xs { margin-right: 5px; }
-  .left-xs { margin-left: 5px; }
   .right-sm { margin-right: 10px; }
+  .right-md { margin-right: 15px; }
+
+  .left-xs { margin-left: 5px; }
   .left-sm { margin-left: 10px; }
+  .left-md { margin-left: 15px; }
+
   .bottom-xs { margin-bottom: 5px; }
   .bottom-sm { margin-bottom: 10px; }
+  .bottom-md { margin-bottom: 15px; }
 
   .danger-color { color: $danger-color !important; }
   .success-color { color: $success-color !important; }
@@ -283,6 +295,7 @@
     margin-top: 2px;
     font-size: 12px;
     background-color: $tooltip-background-color;
+    border: 1px solid $tooltip-border-color;
     border-radius: 4px;
     padding: 4px 8px;
   }

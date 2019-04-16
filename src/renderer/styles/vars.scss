@@ -17,6 +17,9 @@ $modal-body-background-color: rgba(40, 40, 40, 1);
 $modal-footer-background-color: rgba(40, 40, 40, 1);
 
 $tooltip-background-color: rgba(64, 64, 64, 1);
+$tooltip-border-color: rgba(40, 40, 40, 1);
+
+$card-background-color: rgba(40, 40, 40, 1);
 
 $border-color: rgba(64, 64, 64, 1);
 $background-color: rgba(40, 40, 40, 1);
@@ -43,6 +46,8 @@ $list-item-color: rgba(48, 48, 48, 1);
 $input-border-color: rgba(64, 64, 64, 1);
 $input-background-color: rgba(48, 48, 48, 1);
 $input-border-radius: 4px;
+
+$window-padding: 15px;
 
 @mixin no-select {
   user-select: none; /* supported by Chrome and Opera */

@@ -3,10 +3,10 @@
     <button class="btn btn-xs right-sm" :class="getButtonClass">{{scenario.method}}</button>
     <span class="form-control form-control-xs disabled" v-if="baseUrl">{{baseUrl}}</span>
     <input class="form-control form-control-xs flex-4" type="text" v-model.trim="scenario.url" placeholder="URL" disabled>
-    <button class="btn left-sm btn-xs" @click="onClickEdit" v-tooltip.bottom="'Edit Scenario'">
+    <button class="btn left-sm btn-xs" @click="onClickEdit" v-tooltip="'Edit Scenario'">
       <Icon icon='pen' />
     </button>
-    <button class="btn left-sm btn-xs" @click="onClickRemove" v-tooltip.bottom-end="'Remove Scenario'">
+    <button class="btn left-sm btn-xs" @click="onClickRemove" v-tooltip="'Remove Scenario'">
       <Icon icon='trash-alt' />
     </button>
   </div>

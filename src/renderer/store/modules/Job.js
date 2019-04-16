@@ -22,12 +22,14 @@ const mutations = {
     }
 
     job.is_running = true;
+    job.started_at = Date.now();
     job.report = {};
     Vue.set(state.jobs, configId, job);
   },
   STOP_JOB(state, configId) {
     const job = state.jobs[configId];
     if (job) {
+      Vue.set(job, 'ended_at', Date.now());
       Vue.set(job, 'is_running', false);
     }
   },

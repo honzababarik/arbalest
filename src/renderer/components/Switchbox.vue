@@ -1,6 +1,9 @@
 <template>
   <div class="form-switch">
-    <label>{{label}}</label>
+    <div>
+      <div class="title">{{title}}</div>
+      <div class="subtitle" v-if="subtitle">{{subtitle}}</div>
+    </div>
     <label class="switch">
       <input type="checkbox" :checked="isChecked" :value="isChecked" :id="name" @change="onChange">
       <span class="slider round"></span>
@@ -15,7 +18,10 @@
       name: {
         type: String,
       },
-      label: {
+      title: {
+        type: String,
+      },
+      subtitle: {
         type: String,
       },
       isChecked: {
@@ -47,6 +53,14 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 15px;
+    .title {
+      font-size: 14px;
+    }
+    .subtitle {
+      margin-top: 3px;
+      font-size: 12px;
+      color: $text-color-dark;
+    }
     .switch {
       position: relative;
       display: inline-block;

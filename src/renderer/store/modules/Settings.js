@@ -4,6 +4,7 @@ const state = {
   settings: {
     request: {
       does_verify_SSL: true,
+      does_log_progress: false,
       timeout: null,
       pool: null,
     },

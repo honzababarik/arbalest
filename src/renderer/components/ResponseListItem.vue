@@ -3,7 +3,7 @@
     <div class="main" @click="onClick">
       <div class="info">
         <div class="tag" :class="getMethodTagCss">{{response.method}}</div>
-        <div class="tag" :class="getStatusTagCss">{{response.status}}</div>
+        <div class="tag" :class="getStatusTagCss">{{response.status_code}}</div>
         <div class="url">{{response.url}}</div>
       </div>
       <div>
@@ -45,14 +45,14 @@
         return this.$dvlt.style.getMethodStyle(this.response.method);
       },
       getStatusTagCss() {
-        const status = this.response.status;
-        if (status >= 200 && status < 300) {
+        const statusCode = this.response.status_code;
+        if (statusCode >= 200 && statusCode < 300) {
           return 'success';
         }
-        if (status >= 400 && status < 500) {
+        if (statusCode >= 400 && statusCode < 500) {
           return 'warning';
         }
-        if (status >= 500) {
+        if (statusCode >= 500) {
           return 'danger';
         }
         return '';

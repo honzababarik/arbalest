@@ -5,10 +5,10 @@
       <div class="subtitle">{{config.url}}</div>
     </div>
     <div>
-      <button class="btn btn-transparent danger-color" @click="onClickStop" v-if="isRunning" v-tooltip.bottom="'Stop Test'">
+      <button class="btn btn-transparent danger-color" @click="onClickStop" v-if="isRunning" v-tooltip="'Stop Test'">
         <Icon icon='stop-circle' size='lg'></Icon>
       </button>
-      <button class="btn btn-transparent" @click="onClickRun" v-else  v-tooltip.bottom="'Run Test'">
+      <button class="btn btn-transparent" @click="onClickRun" v-else  v-tooltip="'Run Test'">
         <Icon icon='play-circle' size='lg'></Icon>
       </button>
     </div>

@@ -7,23 +7,23 @@
         <h2>{{config.url}}</h2>
       </div>
       <div class="menu">
-        <button class="btn btn-transparent" @click="onClickClear" v-if="!isRunning" v-tooltip.bottom="'Clear'">
+        <button class="btn btn-transparent" @click="onClickClear" v-if="!isRunning" v-tooltip="'Clear'">
           <Icon icon='ban' size='lg' />
         </button>
-        <button class="btn btn-transparent danger-color" @click="onClickStop" v-if="isRunning" v-tooltip.bottom="'Stop Test'">
+        <button class="btn btn-transparent danger-color" @click="onClickStop" v-if="isRunning" v-tooltip="'Stop Test'">
           <Icon icon='stop-circle' size='lg' />
         </button>
-        <button class="btn btn-transparent" @click="onClickRun" v-if="!isRunning" v-tooltip.bottom="'Run Test'">
+        <button class="btn btn-transparent" @click="onClickRun" v-if="!isRunning" v-tooltip="'Run Test'">
           <Icon icon='play-circle' size='lg' />
         </button>
-        <button class="btn btn-transparent" @click="onClickRunCloud" v-if="!isRunning" v-tooltip.bottom="'Run Test in Cloud'">
+        <button class="btn btn-transparent" @click="onClickRunCloud" v-if="!isRunning" v-tooltip="'Run Test in Cloud'">
           <Icon icon='cloud-upload-alt' size='lg' />
         </button>
         <div class="divider-h"></div>
-        <button class="btn btn-transparent" @click="onClickEdit" v-tooltip.bottom="'Edit Test'">
+        <button class="btn btn-transparent" @click="onClickEdit" v-tooltip="'Edit Test'">
           <Icon icon='pen' size='lg' />
         </button>
-        <button class="btn btn-transparent" @click="onClickDelete"  v-tooltip.bottom="'Delete Test'">
+        <button class="btn btn-transparent" @click="onClickDelete"  v-tooltip="'Delete Test'">
           <Icon icon='trash-alt' size='lg' />
         </button>
       </div>
@@ -38,21 +38,57 @@
     </div>
 
     <div class="content">
-      <div class="row">
+      <div class="row flex-1 bottom-md" v-if="shouldShowCharts">
+        <div class="card">
+          <div class="header">Response Codes</div>
+          <div class="body">
+            <Chart type="donut" height="100%" :options="codesChartOptions" :series="codesChartOptions.series" />
+          </div>
+        </div>
+        <div class="card">
+          <div class="header">Response Time Summary</div>
+          <div class="body">
+            <div class="icon-view" v-if="isRunning">
+              <Icon icon='hourglass' :spin='true' size='2x' />
+              <span>Collecting...</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="header">Elapsed time</div>
+          <div class="body">
+            OK
+          </div>
+        </div>
+        <div class="card">
+          <div class="header">Remaining time</div>
+          <div class="body">
+            OK
+          </div>
+        </div>
+      </div>
+      <div class="row flex-2">
         <Panel header='Responses' ref="responses">
-          <ResponseListItem v-for="(response, i) in displayResponses" :key="i" :response="response"></ResponseListItem>
+          <ResponseListItem v-for="(response, i) in responses" :key="i" :response="response"></ResponseListItem>
         </Panel>
-        <Panel header='Latency'>
-          <ApexCharts
-            :series="[{ data: [23, 34, 12, 54, 32, 43] }]"
-
-            />
+        <Panel header='Response Time' :css="shouldShowCharts ? 'panel-response-times active' : 'panel-response-times inactive'">
+          <Chart v-if="shouldShowCharts" height="100%" :options="latencyChartOptions" :series="latencyChartData" />
+          <div v-else>
+            <div class="icon-view" v-if="isRunning">
+              <Icon icon='hourglass' :spin='true' size='2x' />
+              <span>Collecting data...</span>
+            </div>
+            <div class="icon-view" v-else>
+              <Icon icon='pause' size='2x' />
+              <span>Run the test to display response times</span>
+            </div>
+          </div>
         </Panel>
       </div>
     </div>
 
     <Panel header='Terminal' css='panel-terminal' ref="terminal" :is-collapsible="true" :is-searchable="true">
-      <div v-for="(log, i) in displayLogs" :key="i" :class="log.css" slot="default">{{getDisplayLog(log)}}</div>
+      <div v-for="(log, i) in logs" :key="i" :class="log.css" slot="default">{{getDisplayLog(log)}}</div>
     </Panel>
 
   </div>
@@ -61,13 +97,11 @@
 <script>
 
   import ResponseListItem from './ResponseListItem';
-  import ApexCharts from 'apexcharts'
 
   export default {
     name: 'config',
     components: {
       ResponseListItem,
-      ApexCharts
     },
     data() {
       return {
@@ -111,6 +145,18 @@
           this.$store.dispatch('Config/deleteConfig', this.config.id);
         }
       },
+      getStatusCodeColor(statusCode) {
+        if (statusCode >= 200 && statusCode < 300) {
+          return '#669236';
+        }
+        if (statusCode >= 400 && statusCode < 500) {
+          return '#CA9235';
+        }
+        if (statusCode >= 500) {
+          return '#923C3C';
+        }
+        return '#246EC3';
+      }
     },
     watch: {
       'job.responses': function (is, was) {
@@ -133,10 +179,10 @@
       isRunning() {
         return this.job && this.job.is_running;
       },
-      displayResponses() {
+      responses() {
         return this.job ? this.job.responses : [];
       },
-      displayLogs() {
+      logs() {
         return this.job ? this.job.logs : [];
       },
       errors() {
@@ -151,6 +197,125 @@
         const progress = 25;
         return `width: ${progress}%`;
       },
+      shouldShowCharts() {
+        return this.responses.length > 0
+      },
+      codesChartOptions() {
+        const options = {
+          colors: [],
+          labels: [],
+          series: []
+        }
+
+        this.responses.forEach(response => {
+          const index = options.labels.indexOf(response.status_code);
+          if (index === -1) {
+            options.labels.push(response.status_code)
+            options.colors.push(this.getStatusCodeColor(response.status_code))
+            options.series.push(1)
+          }
+          else {
+            options.series[index] += 1
+          }
+        })
+
+        return {
+          chart: {
+            id: 'chart-codes'
+          },
+          legend: {
+            show: false
+          },
+          stroke: {
+            width: 1,
+            colors: 'rgba(40, 40, 40, 1)',
+          },
+          plotOptions: {
+            pie: {
+              donut: {
+                size: '70%',
+                labels: {
+                  show: true,
+                  total: {
+                    show: true,
+                    label: ''
+                  },
+                },
+              },
+              dataLabels: {
+                offset: 3
+              }
+            }
+          },
+          dataLabels: {
+            formatter: function (val) {
+              return val + "%"
+            },
+            dropShadow: {
+              enabled: false
+            }
+          },
+          ...options
+        };
+      },
+      latencyChartOptions() {
+        return {
+          stroke: {
+            curve: 'smooth'
+          },
+          chart: {
+            id: 'chart-latency',
+            type: 'line',
+            toolbar: {
+              show: true,
+              tools: {
+                download: false
+              }
+            },
+          },
+          tooltip: {
+            x: {
+              show: false
+            },
+            fixed: {
+              enabled: true,
+              position: 'topLeft'
+            }
+          },
+          yaxis: {
+            labels: {
+              formatter: (latency) => {
+                return `${latency}ms`
+              }
+            }
+          },
+          xaxis: {
+            type: 'numeric',
+            labels: {
+              formatter: (msSinceStart) => {
+                const sSinceStart = Math.floor(msSinceStart / 1000)
+                return `${sSinceStart}s`
+              }
+            }
+          },
+        }
+      },
+      latencyChartData() {
+        const data = this.responses.map(response => {
+          const msSinceStart = response.ended_at - this.job.started_at
+          return {
+            x: msSinceStart,
+            y: response.time
+          }
+        })
+        if (data.length === 0) {
+          return []
+        }
+        return [{
+          name: 'Latency',
+          data: data
+        }]
+      }
     },
     mounted() {
       if (this.$refs.terminal) {
@@ -166,78 +331,155 @@
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 
   @import "../styles/vars.scss";
 
+  $navbar-height: 64px;
   .test {
     flex: 1;
     display: flex;
     flex-direction: column;
     height: 100vh;
-  }
 
-  $navbar-height: 64px;
-  .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: $navbar-height;
-    padding-left: 10px;
-    h1 {
-      font-size: 16px;
-      margin: 0 0 4px 0;
-      padding: 0;
-    }
-    h2 {
-      font-size: 12px;
-      font-weight: normal;
-      color: $text-color-dark;
-      margin: 0;
-      padding: 0;
-    }
-    .menu {
+    .navbar {
       display: flex;
-      height: inherit;
+      justify-content: space-between;
+      align-items: center;
+      height: $navbar-height;
+      padding: 0 10px;
+      h1 {
+        font-size: 16px;
+        margin: 0 0 4px 0;
+        padding: 0;
+      }
+      h2 {
+        font-size: 12px;
+        font-weight: normal;
+        color: $text-color-dark;
+        margin: 0;
+        padding: 0;
+      }
+      .menu {
+        display: flex;
+        height: inherit;
+      }
+      button {
+        height: inherit;
+        width: $navbar-height;
+        padding: 18px 18px;
+        border-radius: 0;
+        &:hover {
+          background-color: $button-hover-color;
+        }
+      }
     }
-    button {
-      height: inherit;
-      width: $navbar-height;
-      padding: 18px 18px;
-      border-radius: 0;
-      &:hover {
-        background-color: $button-hover-color;
+
+    .errors {
+      .error {
+        color: white;
+        padding: 15px 10px;
+        &.danger {
+          font-size: 13px;
+          background-color: $danger-color;
+        }
+      }
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      flex: 2;
+      padding: $window-padding;
+      background-color: $background-color-light;
+    }
+
+    .row {
+      display: flex;
+      .panel {
+        & + .panel {
+          margin-left: $window-padding;
+        }
       }
     }
 
   }
 
-  .errors {
-    .error {
-      color: white;
-      padding: 15px 10px;
-      &.danger {
-        font-size: 13px;
-        background-color: $danger-color;
-      }
+  .card {
+    border-radius: $border-radius;
+    background-color: $card-background-color;
+    flex: 1;
+    padding: 15px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    .header {
+      color: $text-color-dark;
+      font-size: 13px;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    & + .card {
+      margin-left: $window-padding;
     }
   }
 
-  .content {
+  .icon-view {
+    color: $text-color-dark;
     display: flex;
     flex-direction: column;
-    flex: 2;
-    padding: 15px;
-    background-color: $background-color-light;
+    justify-content: center;
+    align-items: center;
+    svg {
+      display: block;
+      margin-bottom: 20px;
+    }
   }
 
-  .row {
-    display: flex;
-    flex: 1;
-    .panel {
-      & + .panel {
-        margin-left: 10px;
+  .panel {
+    &.inactive {
+      .panel-body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
+    }
+    &.active {
+      .panel-body {
+        padding: 10px 0;
+      }
+    }
+  }
+
+  $chart-label-color: $text-color-dark;
+  $chart-line-color: $text-color-dark;
+  $chart-legend-color: $text-color-dark;
+
+  .apexcharts-canvas {
+    background-color: transparent;
+    .apexcharts-tooltip {
+      background: $tooltip-background-color;
+      border-color: $tooltip-border-color;
+    }
+    .apexcharts-yaxis-label, .apexcharts-xaxis-label {
+      fill: $chart-label-color;
+    }
+    .apexcharts-gridline {
+      stroke: $chart-line-color;
+    }
+    .apexcharts-legend-series {
+      display: flex;
+      align-items: center;
+    }
+    .apexcharts-legend-text {
+      color: $chart-legend-color !important;
+    }
+    .apexcharts-datalabels-group {
+      transform: translate(0, -23px);
+    }
+    .apexcharts-datalabel-label, .apexcharts-datalabel-value {
+      text-transform: uppercase;
+      fill: $chart-legend-color !important;
     }
   }
 

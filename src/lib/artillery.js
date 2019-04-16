@@ -26,6 +26,9 @@ class Artillery extends Observable {
     if (!settings.request.does_verify_SSL) {
       args.push('-k');
     }
+    if (!settings.request.does_log_progress) {
+      args.push('-q');
+    }
 
     this.pid = this.terminal.run(
       'artillery',
@@ -37,11 +40,15 @@ class Artillery extends Observable {
     );
   }
 
+  getLines(text) {
+    return `${text}`.trim().split('\n');
+  }
+
   parseText(str) {
     return str.split('\n');
   }
 
-  parseLog(text) {
+  parseLine(text) {
     let json = {};
     const str = `${text}`.trim();
     try {
@@ -57,13 +64,16 @@ class Artillery extends Observable {
   }
 
   onLog = (text) => {
-    const json = this.parseLog(text);
-    if (json.type === 'response') {
-      this.emit('response', json.data);
-    }
-    else if (json.type === 'text') {
-      for (let i = 0; i < json.data.length; i++) {
-        this.emit('line', json.data[i]);
+    const lines = this.getLines(text);
+    for (let i = 0; i < lines.length; i++) {
+      const json = this.parseLine(lines[i]);
+      if (json.type === 'response') {
+        this.emit('response', json.data);
+      }
+      else if (json.type === 'text') {
+        for (let i = 0; i < json.data.length; i++) {
+          this.emit('line', json.data[i]);
+        }
       }
     }
   }

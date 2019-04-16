@@ -2,8 +2,12 @@
   <Modal header='Settings' @close="$emit('close')">
     <div class="tab-body">
       <Switchbox
-        label='SSL Certificate Verification' name='request.does_verify_SSL'
+        title='SSL Certificate Verification' name='request.does_verify_SSL'
         @toggle='onToggleRequestSettings' :is-checked='settings.request.does_verify_SSL' />
+      <Switchbox
+        title='Log Test Progress'
+        subtitle='Display test progress output in the terminal' name='request.does_log_progress'
+        @toggle='onToggleRequestSettings' :is-checked='settings.request.does_log_progress' />
       <SettingsItem v-for="(item, i) in items" :key="i" :item="item" @change="onItemChanged" :value="getItemValue(item)" />
     </div>
   </Modal>
@@ -32,7 +36,7 @@
           {
             name: 'request.timeout',
             title: 'HTTP Timeout',
-            subtitle: 'Responses have to be sent within timeout or the request will be aborted',
+            subtitle: 'Responses have to be sent within timeout in seconds or the request will be aborted',
             placeholder: 'Unlimited',
           },
           {
