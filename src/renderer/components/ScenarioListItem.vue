@@ -22,7 +22,7 @@
     },
     props: {
       scenario: Object,
-      baseUrl: String
+      baseUrl: String,
     },
     methods: {
       onClickRemove() {
@@ -30,13 +30,13 @@
       },
       onClickEdit() {
         this.$emit('edit', this.scenario);
-      }
+      },
     },
     computed: {
       getButtonClass() {
-        const style = this.$dvlt.style.getMethodStyle(this.scenario.method)
+        const style = this.$dvlt.style.getMethodStyle(this.scenario.method);
         return `btn-${style}`;
-      }
+      },
     },
   };
 </script>

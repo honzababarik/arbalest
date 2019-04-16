@@ -68,7 +68,7 @@ class ConfigBuilder {
     return this;
   }
 
-  addScenario(scenario) {
+  addRequestScenario(scenario) {
     let form = null;
     let headers = null;
     if (scenario.form && scenario.form.length > 0) {
@@ -90,6 +90,14 @@ class ConfigBuilder {
       json: scenario.body || null,
       form,
     });
+    return this;
+  }
+
+  addScenario(scenario) {
+    if (scenario.type === 'request') {
+      return this.addRequestScenario(scenario);
+    }
+    console.error(`Scenario type ${scenario.type} not supported`);
     return this;
   }
 

@@ -16,20 +16,20 @@
     props: ['item', 'value'],
     data() {
       return {
-        currentValue: null
-      }
+        currentValue: null,
+      };
     },
     watch: {
       value(newVal, oldVal) {
         this.currentValue = newVal;
-      }
+      },
     },
     methods: {
       isValidForm() {
         const errors = [];
         // Could use better validation, values should be configurable
         if (this.currentValue < 1) {
-          errors.push('value')
+          errors.push('value');
         }
         return errors.length === 0;
       },
@@ -37,10 +37,10 @@
         if (!this.isValidForm()) {
           return;
         }
-        console.log('Changed!')
-        this.$emit('change', this.item, this.currentValue)
+        console.log('Changed!');
+        this.$emit('change', this.item, this.currentValue);
       },
-    }
+    },
   };
 
 </script>

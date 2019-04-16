@@ -75,7 +75,7 @@
           duration: 10,
           rate: 1,
           headers: [{ name: null, value: null }],
-          scenarios: [this.getNewScenario()],
+          scenarios: [],
         },
         errors: [],
       };
@@ -84,36 +84,27 @@
       onClickCancel() {
         this.$router.go(-1);
       },
-      getNewScenario() {
-        return {
-          method: 'GET',
-          url: '/',
-          body: null,
-          content_type: this.$dvlt.data.contentTypes[0],
-          data: [],
-        };
-      },
       onClickAddScenario() {
         this.$modal.show(ScenarioModal, {
           baseUrl: this.config.url,
-          onSaved: this.onScenarioAdded
-        }, { height: 'auto' })
+          onSaved: this.onScenarioAdded,
+        }, { height: 'auto' });
       },
       onScenarioAdded(scenario) {
-        this.config.scenarios.push(scenario)
+        this.config.scenarios.push(scenario);
       },
       onScenarioEdited(newScenario, scenario) {
-        const index = this.config.scenarios.findIndex(s => s === scenario)
+        const index = this.config.scenarios.findIndex(s => s === scenario);
         if (index !== -1) {
-          this.config.scenarios[index] = newScenario
+          this.config.scenarios[index] = newScenario;
         }
       },
       onClickEditScenario(scenario) {
         this.$modal.show(ScenarioModal, {
           baseUrl: this.config.url,
           onSaved: this.onScenarioEdited,
-          editedScenario: scenario
-        }, { height: 'auto' })
+          editedScenario: scenario,
+        }, { height: 'auto' });
       },
       onClickAddHeader() {
         this.config.headers.push({ name: null, value: null });

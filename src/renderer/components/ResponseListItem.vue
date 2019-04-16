@@ -42,7 +42,7 @@
         return JSON.parse(this.response.data);
       },
       getMethodTagCss() {
-        return this.$dvlt.style.getMethodStyle(this.response.method)
+        return this.$dvlt.style.getMethodStyle(this.response.method);
       },
       getStatusTagCss() {
         const status = this.response.status;

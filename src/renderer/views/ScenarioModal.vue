@@ -76,6 +76,7 @@
       },
       getNewScenario() {
         return {
+          type: 'request',
           method: 'GET',
           url: '/',
           body: null,
@@ -97,7 +98,7 @@
         this.scenario.form.push({
           name: null,
           value: null,
-        })
+        });
       },
       onSelectContentType(i) {
         this.scenario.content_type = this.contentTypes[i];
@@ -108,16 +109,16 @@
       isValidForm() {
         const errors = [];
 
-        if (!this.scenario.url || this.scenario.url.length === 0)  {
-          errors.push('url')
+        if (!this.scenario.url || this.scenario.url.length === 0) {
+          errors.push('url');
         }
 
         if (this.isRawInput && this.body) {
           try {
-            JSON.parse(this.body)
+            JSON.parse(this.body);
           }
           catch (err) {
-            errors.push('body')
+            errors.push('body');
           }
         }
 
@@ -129,7 +130,7 @@
           return;
         }
         if (this.onSaved) {
-          this.onSaved(this.getScenario(), this.editedScenario)
+          this.onSaved(this.getScenario(), this.editedScenario);
         }
         this.$emit('close');
       },
@@ -137,23 +138,23 @@
         this.$emit('close');
       },
       getScenario() {
-        const scenario = this.scenario
+        const scenario = this.scenario;
         if (this.isRawInput) {
-          scenario.body = this.body ? JSON.parse(this.body) : null
-          scenario.form = []
+          scenario.body = this.body ? JSON.parse(this.body) : null;
+          scenario.form = [];
         }
         else {
-          scenario.body = null
-          scenario.form = this.getFormValues()
+          scenario.body = null;
+          scenario.form = this.getFormValues();
         }
 
-        return scenario
+        return scenario;
       },
       getFormValues() {
-        return this.scenario.form.filter(value => {
+        return this.scenario.form.filter((value) => {
           return value.name && value.value;
-        })
-      }
+        });
+      },
     },
     computed: {
       isCreate() {
@@ -169,8 +170,8 @@
         return this.isCreate ? 'Add Scenario' : 'Edit Scenario';
       },
       getMethodInputStyle() {
-        const color = this.$dvlt.style.getMethodStyle(this.scenario.method)
-        return `btn btn-input btn-xs right-sm btn-${color}`
+        const color = this.$dvlt.style.getMethodStyle(this.scenario.method);
+        return `btn btn-input btn-xs right-sm btn-${color}`;
       },
     },
     mounted() {
@@ -178,7 +179,7 @@
         this.scenario = this.editedScenario;
         this.body = JSON.stringify(this.scenario.body, null, 2);
       }
-    }
+    },
   };
 </script>
 

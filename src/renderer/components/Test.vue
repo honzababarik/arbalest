@@ -83,14 +83,14 @@
       },
       onClickDelete() {
         if (this.isRunning) {
-          this.$dvlt.notify("You cannot delete the test while it's running. Stop the test first and delete it afterwards.", 'warn')
-          return
+          this.$dvlt.notify("You cannot delete the test while it's running. Stop the test first and delete it afterwards.", 'warn');
+          return;
         }
         if (confirm('Are you sure you want to delete this test?')) {
           this.$router.push({ name: 'home' });
           this.$store.dispatch('Config/deleteConfig', this.config.id);
         }
-      }
+      },
     },
     watch: {
       'job.responses': function (is, was) {
@@ -120,12 +120,12 @@
         return this.job ? this.job.logs : [];
       },
       errors() {
-        const errors = []
+        const errors = [];
         if (this.config.scenarios.length === 0) {
-          errors.push({ text: "Test is missing scenarios. Running this test won't produce any results.", type: 'danger' })
+          errors.push({ text: "Test is missing scenarios. Running this test won't produce any results.", type: 'danger' });
         }
         return errors;
-      }
+      },
     },
     mounted() {
       if (this.$refs.terminal) {

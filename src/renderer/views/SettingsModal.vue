@@ -41,7 +41,7 @@
             subtitle: 'All HTTP requests from all virtual users will be sent over the same connections',
             placeholder: 'Unlimited',
           },
-        ]
+        ],
       };
     },
     methods: {
@@ -61,8 +61,8 @@
       },
       getItemValue(item) {
         // TODO stuff
-        return null
-      }
+        return null;
+      },
     },
     computed: {
       settings() {
