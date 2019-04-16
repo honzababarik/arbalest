@@ -23,7 +23,7 @@ class Artillery extends Observable {
 
     const args = ['run', this.configPath, '-o', this.reportPath];
 
-    if (!settings.request.doesVerifySSL) {
+    if (!settings.request.does_verify_SSL) {
       args.push('-k');
     }
 

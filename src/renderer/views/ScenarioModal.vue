@@ -177,7 +177,9 @@
     mounted() {
       if (this.editedScenario) {
         this.scenario = this.editedScenario;
-        this.body = JSON.stringify(this.scenario.body, null, 2);
+        if (this.scenario.body) {
+          this.body = JSON.stringify(this.scenario.body, null, 2);
+        }
       }
     },
   };

@@ -50,14 +50,15 @@
     height: inherit;
     display: flex;
     flex-direction: column;
-    background-color: $modal-background-color;
     color: $text-color;
+    background-color: black;
   }
 
   .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: $modal-header-background-color;
     border-bottom: 2px solid $theme-color;
     .btn {
       padding: 12px 16px;
@@ -73,12 +74,14 @@
   }
 
   .modal-body {
+    background-color: $modal-body-background-color;
     min-height: 30vh;
     max-height: 80vh;
     overflow: scroll;
   }
 
   .modal-footer {
+    background-color: $modal-footer-background-color;
     border-top: 1px solid $border-color;
     padding: 10px 15px;
     display: flex;

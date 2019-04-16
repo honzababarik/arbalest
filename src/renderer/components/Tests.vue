@@ -2,7 +2,7 @@
   <div class="wrapper">
     <div class="header">
       <div class="d-flex">
-        <button class="btn btn-success btn-circle right-sm" @click="onClickAdd">+</button>
+        <button class="btn btn-success btn-circle right-sm" @click="onClickAdd" v-tooltip.bottom="'Add Test'">+</button>
         <h1>Tests</h1>
       </div>
       <div>

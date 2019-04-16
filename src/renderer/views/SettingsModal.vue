@@ -2,8 +2,8 @@
   <Modal header='Settings' @close="$emit('close')">
     <div class="tab-body">
       <Switchbox
-        label='SSL Certificate Verification' name='request.doesVerifySSL'
-        @toggle='onToggleRequestSettings' :is-checked='settings.request.doesVerifySSL' />
+        label='SSL Certificate Verification' name='request.does_verify_SSL'
+        @toggle='onToggleRequestSettings' :is-checked='settings.request.does_verify_SSL' />
       <SettingsItem v-for="(item, i) in items" :key="i" :item="item" @change="onItemChanged" :value="getItemValue(item)" />
     </div>
   </Modal>
@@ -60,6 +60,7 @@
         this.updateSettings(this.getItemKey(item), value);
       },
       updateSettings(key, value) {
+        this.$dvlt.notify('Your settings were updated!')
         this.$store.dispatch('Settings/changeRequestSettings', { key, value });
       },
       getItemValue(item) {

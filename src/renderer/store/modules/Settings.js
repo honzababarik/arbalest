@@ -3,7 +3,7 @@ import Vue from 'vue';
 const state = {
   settings: {
     request: {
-      doesVerifySSL: true,
+      does_verify_SSL: true,
       timeout: null,
       pool: null,
     },

@@ -85,9 +85,6 @@
     input:checked + .slider {
       background-color: $theme-color;
     }
-    input:focus + .slider {
-      box-shadow: 0 0 1px $theme-color;
-    }
     input:checked + .slider:before {
       -webkit-transform: translateX($toggle-size);
       -ms-transform: translateX($toggle-size);

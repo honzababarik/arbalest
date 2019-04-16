@@ -7,20 +7,23 @@
         <h2>{{config.url}}</h2>
       </div>
       <div class="menu">
-        <button class="btn btn-transparent" @click="onClickClear" v-if="!isRunning">
+        <button class="btn btn-transparent" @click="onClickClear" v-if="!isRunning" v-tooltip.bottom="'Clear'">
           <Icon icon='ban' size='lg' />
         </button>
-        <button class="btn btn-transparent danger-color" @click="onClickStop" v-if="isRunning">
+        <button class="btn btn-transparent danger-color" @click="onClickStop" v-if="isRunning" v-tooltip.bottom="'Stop Test'">
           <Icon icon='stop-circle' size='lg' />
         </button>
-        <button class="btn btn-transparent" @click="onClickRun" v-else>
+        <button class="btn btn-transparent" @click="onClickRun" v-if="!isRunning" v-tooltip.bottom="'Run Test'">
           <Icon icon='play-circle' size='lg' />
         </button>
+        <button class="btn btn-transparent" @click="onClickRunCloud" v-if="!isRunning" v-tooltip.bottom="'Run Test in Cloud'">
+          <Icon icon='cloud-upload-alt' size='lg' />
+        </button>
         <div class="divider-h"></div>
-        <button class="btn btn-transparent" @click="onClickEdit">
+        <button class="btn btn-transparent" @click="onClickEdit" v-tooltip.bottom="'Edit Test'">
           <Icon icon='pen' size='lg' />
         </button>
-        <button class="btn btn-transparent" @click="onClickDelete">
+        <button class="btn btn-transparent" @click="onClickDelete"  v-tooltip.bottom="'Delete Test'">
           <Icon icon='trash-alt' size='lg' />
         </button>
       </div>
@@ -73,6 +76,9 @@
       async onClickRun() {
         this.clear();
         this.$store.dispatch('Job/startJob', this.config.id);
+      },
+      onClickRunCloud() {
+        // Integrate running in cloud
       },
       onClickEdit() {
         this.$router.push({ name: 'test-edit', params: { config_id: this.config.id } });

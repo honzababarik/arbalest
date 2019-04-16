@@ -6,14 +6,14 @@
       <div class="title">Arbalest</div>
       <div class="text-right">
         <EnvironmentDropdown
-          placeholder='[No Environment]'
+          placeholder='No Environment'
           :selectedItem="selectedEnvironment"
           :items="environments"
           display-key="name"
           @select="onClickSelectEnvironment"
           @edit="onClickEditEnvironment"
           @add="onClickAddEnvironment" />
-        <button class="btn btn-transparent" @click="onClickSettings">
+        <button class="btn btn-transparent" @click="onClickSettings" v-tooltip.bottom="'Settings'">
           <Icon icon='cog' size='lg' />
         </button>
       </div>
@@ -53,17 +53,17 @@
 
   // Next:
   // Scenario: Capture variables
-  // Scenario: Multipart
-  // Scenario: Add Cookies
   // Scenario: Add type Sleep
-  // Scenario: Attach Before Request script
-  // Scenario: Attach After Response script
+  // Test: Run via AWS
+  // Test: History of Runs
 
   // Variable randomizer
   // UX: Folderize tests
 
-  // Test: History of Runs
-  // Test: Run via AWS
+  // Scenario: Multipart
+  // Scenario: Add Cookies
+  // Scenario: Attach Before Request script
+  // Scenario: Attach After Response script
 
   export default {
     name: 'Arbalest',
@@ -263,6 +263,15 @@
     flex-direction: column;
     color: white;
     overflow: hidden;
+  }
+
+  .tooltip {
+    color: white;
+    margin-top: 2px;
+    font-size: 12px;
+    background-color: $tooltip-background-color;
+    border-radius: 4px;
+    padding: 4px 8px;
   }
 
   .main {

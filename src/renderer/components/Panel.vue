@@ -68,7 +68,6 @@
             this.focusOnSearchedItem(this.search.index + 1);
           }
           else {
-            this.search.index = 0;
             this.focusOnSearchedItem(0);
           }
         }
@@ -188,7 +187,6 @@
 
   mark {
     border-radius: 4px;
-    padding: 0px 1px;
     &.active {
       background-color: $warning-color;
     }
