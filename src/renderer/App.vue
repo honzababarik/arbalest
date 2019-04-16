@@ -80,9 +80,7 @@
         this.$store.dispatch('Environment/selectEnvironment', environmentId);
       },
       onClickEditEnvironment(environmentId) {
-        this.$modal.show(EnvironmentModal, {
-          environmentId,
-        }, {
+        this.$modal.show(EnvironmentModal, { environmentId }, {
           height: 'auto',
         });
       },
@@ -282,6 +280,7 @@
     -webkit-app-region: drag;
     height: 40px;
     border-bottom: 3px solid $theme-color;
+    background-color: $titlebar-color;
     .btn {
       padding: 12px 16px;
       cursor: pointer;
@@ -300,13 +299,14 @@
 
   .sidebar {
     flex: 1;
-    positon: relative;
+    position: relative;
     border-right: 3px solid $border-color;
   }
 
   .mainbar {
     flex: 3;
     display: flex;
+    background-color: $mainbar-color;
   }
 
   .v--modal {
@@ -331,7 +331,7 @@
     color: white;
     border-radius: 4px;
     cursor: pointer;
-    background-color: $gray-color;
+    background-color: $button-color;
     &:hover {
       color: $text-color-dark;
     }

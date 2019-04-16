@@ -136,7 +136,6 @@
     display: flex;
     overflow: auto;
     flex-direction: column;
-    background-color: $background-color;
     .panel-header {
       cursor: pointer;
       font-size: 12px;
@@ -144,9 +143,11 @@
       border-bottom: 1px solid $border-color;
       padding: 15px 10px 15px 10px;
       text-transform: uppercase;
+      background-color: $panel-header-color;
     }
     .panel-body {
       overflow: scroll;
+      background-color: $panel-body-color;
     }
     .panel-footer {
       display: flex;
@@ -155,6 +156,7 @@
       align-items: center;
       border-top: 1px solid $border-color;
       padding: 15px 10px 15px 10px;
+      background-color: $panel-footer-color;
       .btn {
         padding: 8px 12px;
         font-size: 13px;

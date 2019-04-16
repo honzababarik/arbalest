@@ -55,9 +55,9 @@
   @import "../styles/vars.scss";
 
   .test-list-item {
-    border-bottom: 1px solid $background-color;
+    border-bottom: 1px solid $list-item-border-color;
     cursor: pointer;
-    background-color: $gray-color;
+    background-color: $list-item-color;
     padding: 15px;
     display: flex;
     flex-direction: row;

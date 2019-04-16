@@ -50,7 +50,7 @@
     height: inherit;
     display: flex;
     flex-direction: column;
-    background-color: $background-color;
+    background-color: $modal-background-color;
     color: $text-color;
   }
 

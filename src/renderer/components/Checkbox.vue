@@ -92,7 +92,7 @@
         vertical-align: middle;
         width: 20px;
         height: 20px;
-        background: $background-color-dark;
+        background: $input-background-color;
         border-radius: 4px;
       }
     }

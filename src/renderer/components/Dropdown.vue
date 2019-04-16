@@ -54,7 +54,6 @@ export default {
   @import "../styles/vars.scss";
 
   .dropdown {
-    background-color: $background-color;
     cursor: pointer;
     .input {
       border-radius: $input-border-radius;
@@ -65,7 +64,7 @@ export default {
     ul {
       position: absolute;
       list-style-type: none;
-      background-color: $background-color;
+      background-color: $input-background-color;
       padding: 0;
       margin: -2px 0 0 0;
       min-width: 150px;

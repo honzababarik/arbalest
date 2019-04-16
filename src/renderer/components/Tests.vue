@@ -142,6 +142,7 @@ export default {
     height: 100vh;
     display: flex;
     flex-direction: column;
+    background-color: $sidebar-color;
   }
 
   .header {

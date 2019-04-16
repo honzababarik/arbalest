@@ -1,20 +1,35 @@
+$theme-color: #1FD6A6;
+$info-color: #1D8ED7;
+$danger-color: #ED4848;
+$warning-color: #FDD428;
+$success-color: #20C05C;
+
+$titlebar-color: rgba(40, 40, 40, 1);
+$sidebar-color: rgba(40, 40, 40, 1);
+$mainbar-color: rgba(40, 40, 40, 1);
+
+$panel-header-color: rgba(40, 40, 40, 1);
+$panel-body-color: rgba(40, 40, 40, 1);
+$panel-footer-color: rgba(40, 40, 40, 1);
+
 $border-color: rgba(64, 64, 64, 1);
 $background-color: rgba(40, 40, 40, 1);
-$background-color-dark: rgba(20, 20, 20, 1);
-$gray-color: rgba(48, 48, 48, 1);
-$text-color-dark: rgba(150, 150, 150, 1);
-$text-color: white;;
-$success-color: green;
-$warning-color: orange;
-$danger-color: red;
-$info-color: blue;
-$active-color: orange;
-$theme-color: #1fd6a6;
-$disabled-color: #b8b8b8;
-$disabled-background-color: #ddd;
+$modal-background-color: rgba(40, 40, 40, 1);
+$list-item-border-color: rgba(40, 40, 40, 1);
 
-$input-border-color: $border-color;
-$input-background-color: $gray-color;
+$gray-color: rgba(48, 48, 48, 1);
+
+$text-color-dark: rgba(150, 150, 150, 1);
+$text-color: white;
+
+$active-color: orange;
+$disabled-color: #B8B8B8;
+$disabled-background-color: #DDDDDD;
+$button-color: rgba(48, 48, 48, 1);
+$list-item-color: rgba(48, 48, 48, 1);
+
+$input-border-color: rgba(64, 64, 64, 1);
+$input-background-color: rgba(48, 48, 48, 1);
 $input-border-radius: 4px;
 
 @mixin no-select {

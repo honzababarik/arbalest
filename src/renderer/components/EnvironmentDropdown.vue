@@ -110,7 +110,7 @@
   @import "../styles/vars.scss";
 
   .dropdown-environment {
-    background-color: $background-color;
+    background-color: $input-background-color;
     cursor: pointer;
     position: relative;
     .color {
@@ -140,7 +140,7 @@
     .items {
       position: absolute;
       list-style-type: none;
-      background-color: $background-color;
+      background-color: $input-background-color;
       padding: 0;
       margin: -2px 0 0 0;
       left: 0;
