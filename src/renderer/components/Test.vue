@@ -141,7 +141,7 @@
         this.$store.dispatch('Job/startJob', this.test);
       },
       onClickRunCloud() {
-        // Integrate running in cloud
+        this.$dvlt.notify('Cloud integration is not yet implemented.', 'warn');
       },
       onClickEdit() {
         this.$router.push({ name: 'test-edit', params: { test_id: this.test.id } });

@@ -97,6 +97,26 @@
         this.memory.total = os.totalmem();
         this.memory.used = this.memory.total - os.freemem();
         this.memory.perc = os.freememPercentage();
+      },
+      startMeasurement() {
+        this.stopMeasurement()
+        this.measurementId = setInterval(this.onMeasurement, 2000);
+      },
+      stopMeasurement() {
+        clearInterval(this.measurementId)
+      }
+    },
+    watch: {
+      shouldDisplaySysInfo: {
+        immediate: true,
+        handler(isDisplay, wasDisplay) {
+          if (isDisplay && !wasDisplay) {
+            this.startMeasurement()
+          }
+          if (!isDisplay && wasDisplay) {
+            this.stopMeasurement()
+          }
+        }
       }
     },
     computed: {
@@ -121,11 +141,9 @@
       },
     },
     beforeDestroy() {
-      clearInterval(this.measurementId);
+      this.stopMeasurement()
     },
     mounted() {
-      // TODO cannot be mounted in case user settings changes
-      this.measurementId = setInterval(this.onMeasurement, 2000);
       this.onMeasurement()
     }
   };
