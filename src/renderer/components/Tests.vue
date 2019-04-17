@@ -118,7 +118,7 @@ export default {
     onClickRunTest(test) {
       this.$store.dispatch('Test/selectTest', test.id);
       this.$router.push({ name: 'test', params: { test_id: test.id } });
-      this.$store.dispatch('Job/startJob', test.id);
+      this.$store.dispatch('Job/startJob', test);
     },
     onClickStopTest(test) {
       this.$store.dispatch('Test/selectTest', test.id);

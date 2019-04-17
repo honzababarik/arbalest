@@ -50,10 +50,17 @@
       isRunning() {
         return this.job && this.job.is_running;
       },
+      getMaxResponses() {
+        if (!this.job) {
+          return 0;
+        }
+        return this.job.duration * this.job.rate * this.job.scenarioCount;
+      },
       getProgressStyle() {
-        // TODO show progress
-        const progress = 25;
-        return `width: ${progress}%`;
+        if (this.job && this.getMaxResponses > 0) {
+          const progress = Math.round(this.job.responses.length / this.getMaxResponses * 100);
+          return `width: ${progress}%`;
+        }
       },
     },
   };

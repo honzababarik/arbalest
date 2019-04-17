@@ -11,7 +11,8 @@ const getters = {
 };
 
 const mutations = {
-  START_JOB(state, testId) {
+  START_JOB(state, test) {
+    const testId = test.id;
     let job = state.jobs[testId];
     if (!job) {
       job = {
@@ -24,6 +25,9 @@ const mutations = {
     job.report = null;
     job.logs = [];
     job.responses = [];
+    job.duration = test.duration;
+    job.rate = test.rate;
+    job.scenarioCount = test.scenarios.length;
     Vue.set(state.jobs, testId, job);
   },
   STOP_JOB(state, testId) {
@@ -62,8 +66,8 @@ const mutations = {
 };
 
 const actions = {
-  startJob({ commit }, testId) {
-    commit('START_JOB', testId);
+  startJob({ commit }, test) {
+    commit('START_JOB', test);
   },
   stopJob({ commit }, testId) {
     commit('STOP_JOB', testId);

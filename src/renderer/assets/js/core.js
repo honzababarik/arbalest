@@ -7,6 +7,12 @@ const dvlt = {
   router: {
   },
   time: {
+    getTimeUnits(seconds) {
+      return {
+        minutes: parseInt(seconds / 60, 10),
+        seconds: parseInt(seconds % 60, 10),
+      };
+    },
   },
   consts: {
     KEY_TAB: 9,

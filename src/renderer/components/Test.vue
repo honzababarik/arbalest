@@ -45,11 +45,11 @@
             <Chart type="donut" height="100%" :options="codesChartOptions" :series="codesChartOptions.series" />
           </div>
         </div>
-        <div class="card">
+        <div class="card card-center">
           <div class="header">Response Time Summary</div>
           <div class="body">
             <div class="icon-view" v-if="isRunning">
-              <Icon icon='hourglass' :spin='true' size='2x' />
+              <Icon icon='hourglass' :spin='true' />
             </div>
             <Chart type="bar" :options="summaryChartOptions" :series="summaryChartData" v-if="!isRunning && report" />
           </div>
@@ -61,10 +61,12 @@
           </div>
         </div>
         <div class="card card-center">
-          <div class="header">Remaining time</div>
+          <div class="header">Est Remaining time</div>
           <div class="body">
-            <span v-if="isRunning && getRemainingTime">{{getRemainingTime}}</span>
-            <span v-else>--</span>
+            <div class="icon-view" v-if="isRunning && !getRemainingTime">
+              <Icon icon='hourglass' :spin='true' />
+            </div>
+            <span v-else>{{getRemainingTime}}</span>
           </div>
         </div>
       </div>
@@ -100,6 +102,8 @@
   import ResponseListItem from './ResponseListItem';
   import Timer from '@/../lib/timer';
 
+  const REMAINING_TIME_EST_MIN_RESPONSE_LIMIT = 5
+
   export default {
     name: 'test',
     components: {
@@ -130,7 +134,7 @@
       },
       async onClickRun() {
         this.clear();
-        this.$store.dispatch('Job/startJob', this.test.id);
+        this.$store.dispatch('Job/startJob', this.test);
       },
       onClickRunCloud() {
         // Integrate running in cloud
@@ -220,19 +224,37 @@
         }
         return errors;
       },
+      getMaxResponses() {
+        if (!this.job) {
+          return 0;
+        }
+        return this.job.duration * this.job.rate * this.job.scenarioCount;
+      },
+      getProgressPerc() {
+        if (this.getMaxResponses) {
+          return Math.floor(this.responses.length / this.getMaxResponses * 100);
+        }
+      },
       getProgressStyle() {
-        // TODO show progress
-        const progress = 25;
-        return `width: ${progress}%`;
+        return `width: ${this.getProgressPerc}%`;
       },
       getElapsedTime() {
-        if (this.elapsed.minutes === 0 && this.elapsed.seconds === 0) {
+        if (this.elapsed.minutes && this.elapsed.seconds) {
           return '--'
         }
         return `${this.elapsed.minutes}m ${this.elapsed.seconds}s`
       },
       getRemainingTime() {
-        return '--'
+        if (!this.isRunning) {
+          return '--'
+        }
+        if (!this.getMaxResponses || this.responses.length < REMAINING_TIME_EST_MIN_RESPONSE_LIMIT) {
+          return null;
+        }
+        const elapsedSeconds = this.elapsed.minutes * 60 + this.elapsed.seconds;
+        const remainingSeconds = Math.floor(this.getMaxResponses / this.responses.length * elapsedSeconds)
+        const remainingTime = this.$dvlt.time.getTimeUnits(remainingSeconds);
+        return `${remainingTime.minutes}m ${remainingTime.seconds}s`;
       },
       shouldShowCharts() {
         return this.responses.length > 0;

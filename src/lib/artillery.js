@@ -19,7 +19,7 @@ class Artillery extends Observable {
     this.emit('line', `Configuration stored under: ${file.filePath}`);
 
     this.configPath = file.filePath;
-    this.reportPath = `${file.dirPath}${file.name}-report.json`;
+    this.reportPath = `${file.dirPath}${file.name}-${Date.now()}-report.json`;
 
     const args = ['run', this.configPath, '-o', this.reportPath];
 

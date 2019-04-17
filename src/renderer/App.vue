@@ -40,17 +40,6 @@
   import EnvironmentModal from './views/EnvironmentModal';
   import Artillery from './components/Artillery';
 
-  // Add to the job from config:
-  // job.duration = config.duration;
-  // job.rate = config;
-
-  // TODO show remaining time
-
-  // TODO fix: report should not get parsed for a job if rerun
-
-  // TODO show progress on Test
-  // TODO show progres on Test Item
-
   // TODO show CPU/mem usage
 
   // TODO fix positioning of responses/terminal
@@ -164,6 +153,8 @@
     .value {
       height: inherit;
       background-color: $progress-color;
+      -webkit-transition: width 0.5s;
+      transition: width 0.5s;
     }
     &.progress-sm {
       border-top: 0;
