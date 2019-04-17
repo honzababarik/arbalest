@@ -13,7 +13,7 @@
     },
     methods: {
       run() {
-        this.artillery.run(this.config, this.settings, this.environment);
+        this.artillery.run(this.test, this.settings, this.environment);
       },
       stop() {
         this.artillery.stop();
@@ -21,7 +21,7 @@
       addLog(text, cssClass = '') {
         console.log(text);
         this.$store.dispatch('Job/addLog', {
-          configId: this.config.id,
+          testId: this.test.id,
           log: {
             text,
             time: new Date(),
@@ -33,7 +33,7 @@
         this.addLog(`Job started: ${pid}`);
       },
       onResponse(response) {
-        this.$store.dispatch('Job/addResponse', { configId: this.config.id, response });
+        this.$store.dispatch('Job/addResponse', { testId: this.test.id, response });
       },
       onLine(line) {
         this.addLog(line);
@@ -44,7 +44,7 @@
       onReport(report) {
         this.addLog(`Report is available!`, 'warning');
         this.$store.dispatch('Job/addReport', {
-          configId: this.job.config_id,
+          testId: this.job.test_id,
           data: report
         })
       },
@@ -52,16 +52,16 @@
         if (exitCode === 0) {
           this.addLog('Test finished!', 'success');
           this.$dvlt.notify('Test finished!', 'success', {
-            title: this.config.name,
+            title: this.test.name,
           });
         }
         else {
           this.addLog(`Test failed with code: ${exitCode}`, 'danger');
           this.$dvlt.notify(`Test failed with code ${exitCode}...`, 'danger', {
-            title: this.config.name,
+            title: this.test.name,
           });
         }
-        this.$store.dispatch('Job/stopJob', this.config.id);
+        this.$store.dispatch('Job/stopJob', this.test.id);
       },
       onJobStatusChanged(isRunning, wasRunning) {
         if (!wasRunning && isRunning) {
@@ -73,8 +73,8 @@
       },
     },
     computed: {
-      config() {
-        return this.$store.getters['Config/getConfig'](this.job.config_id);
+      test() {
+        return this.$store.getters['Test/getTest'](this.job.test_id);
       },
     },
     beforeDestroy() {

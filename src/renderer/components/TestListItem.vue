@@ -1,16 +1,21 @@
 <template>
-  <div class="test-list-item" :data-id="config.id" :class="{'active': isActive}" @click="onClick">
-    <div class="left">
-      <div class="title">{{config.name}}</div>
-      <div class="subtitle">{{config.url}}</div>
+  <div>
+    <div class="test-list-item" :data-id="test.id" :class="{'active': isActive}" @click="onClick">
+      <div class="left">
+        <div class="title">{{test.name}}</div>
+        <div class="subtitle">{{test.url}}</div>
+      </div>
+      <div>
+        <button class="btn btn-transparent danger-color" @click="onClickStop" v-if="isRunning" v-tooltip="'Stop Test'">
+          <Icon icon='stop-circle' size='lg'></Icon>
+        </button>
+        <button class="btn btn-transparent" @click="onClickRun" v-else  v-tooltip="'Run Test'">
+          <Icon icon='play-circle' size='lg'></Icon>
+        </button>
+      </div>
     </div>
-    <div>
-      <button class="btn btn-transparent danger-color" @click="onClickStop" v-if="isRunning" v-tooltip="'Stop Test'">
-        <Icon icon='stop-circle' size='lg'></Icon>
-      </button>
-      <button class="btn btn-transparent" @click="onClickRun" v-else  v-tooltip="'Run Test'">
-        <Icon icon='play-circle' size='lg'></Icon>
-      </button>
+    <div class="progress progress-sm" v-if="isRunning">
+      <div class="value" :style="getProgressStyle"></div>
     </div>
   </div>
 </template>
@@ -21,7 +26,7 @@
 
   export default {
     props: {
-      config: Object,
+      test: Object,
       isActive: {
         type: Boolean,
         default: false,
@@ -29,21 +34,26 @@
     },
     methods: {
       onClick() {
-        this.$emit('click', this.config);
+        this.$emit('click', this.test);
       },
       onClickRun() {
-        this.$emit('run', this.config);
+        this.$emit('run', this.test);
       },
       onClickStop() {
-        this.$emit('stop', this.config);
+        this.$emit('stop', this.test);
       },
     },
     computed: {
       job() {
-        return this.$store.getters['Job/getJobByConfigId'](this.config.id);
+        return this.$store.getters['Job/getJobByTestId'](this.test.id);
       },
       isRunning() {
         return this.job && this.job.is_running;
+      },
+      getProgressStyle() {
+        // TODO show progress
+        const progress = 25;
+        return `width: ${progress}%`;
       },
     },
   };

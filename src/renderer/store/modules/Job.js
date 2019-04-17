@@ -7,15 +7,15 @@ const state = {
 
 const getters = {
   getJobs: state => state.jobs,
-  getJobByConfigId: state => configId => state.jobs[configId],
+  getJobByTestId: state => testId => state.jobs[testId],
 };
 
 const mutations = {
-  START_JOB(state, configId) {
-    let job = state.jobs[configId];
+  START_JOB(state, testId) {
+    let job = state.jobs[testId];
     if (!job) {
       job = {
-        config_id: configId,
+        test_id: testId,
       };
     }
 
@@ -24,35 +24,35 @@ const mutations = {
     job.report = null;
     job.logs = [];
     job.responses = [];
-    Vue.set(state.jobs, configId, job);
+    Vue.set(state.jobs, testId, job);
   },
-  STOP_JOB(state, configId) {
-    const job = state.jobs[configId];
+  STOP_JOB(state, testId) {
+    const job = state.jobs[testId];
     if (job) {
       job.ended_at = Date.now();
       job.is_running = false;
     }
   },
-  ADD_LOG(state, { configId, log }) {
-    const job = state.jobs[configId];
+  ADD_LOG(state, { testId, log }) {
+    const job = state.jobs[testId];
     if (job) {
       job.logs.push(log);
     }
   },
-  ADD_RESPONSE(state, { configId, response }) {
-    const job = state.jobs[configId];
+  ADD_RESPONSE(state, { testId, response }) {
+    const job = state.jobs[testId];
     if (job) {
       job.responses.push(response);
     }
   },
-  ADD_REPORT(state, { configId, report }) {
-    const job = state.jobs[configId];
+  ADD_REPORT(state, { testId, report }) {
+    const job = state.jobs[testId];
     if (job) {
       job.report = report;
     }
   },
-  CLEAR_JOB(state, configId) {
-    const job = state.jobs[configId];
+  CLEAR_JOB(state, testId) {
+    const job = state.jobs[testId];
     if (job) {
       job.responses = [];
       job.logs = [];
@@ -62,11 +62,11 @@ const mutations = {
 };
 
 const actions = {
-  startJob({ commit }, configId) {
-    commit('START_JOB', configId);
+  startJob({ commit }, testId) {
+    commit('START_JOB', testId);
   },
-  stopJob({ commit }, configId) {
-    commit('STOP_JOB', configId);
+  stopJob({ commit }, testId) {
+    commit('STOP_JOB', testId);
   },
   addLog({ commit }, payload) {
     commit('ADD_LOG', payload);
@@ -74,12 +74,12 @@ const actions = {
   addResponse({ commit }, payload) {
     commit('ADD_RESPONSE', payload);
   },
-  clearJob({ commit }, configId) {
-    commit('CLEAR_JOB', configId);
+  clearJob({ commit }, testId) {
+    commit('CLEAR_JOB', testId);
   },
-  addReport({ commit }, { configId, data }) {
+  addReport({ commit }, { testId, data }) {
     const jobReport = new Report(data);
-    commit('ADD_REPORT', { configId, report: jobReport.toJSON() });
+    commit('ADD_REPORT', { testId, report: jobReport.toJSON() });
   },
 };
 

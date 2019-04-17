@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    Continue by selecting a config or creating new one
+    Continue by selecting a test or creating new one
   </div>
 </template>
 

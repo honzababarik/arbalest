@@ -9,7 +9,7 @@ const store = new Store();
 const vuexStorage = createPersistedState({
   modules,
   paths: [
-    'Config.configs',
+    'Test.tests',
     'Settings.settings',
     'Environment.environments',
     'Environment.currentEnvironmentId',

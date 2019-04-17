@@ -16,9 +16,9 @@
     <div class="content">
       <draggable @end="onStopDragging">
         <TestListItem
-          v-for="config in configs" :key="config.id"
-          :config="config" :is-active="selectedConfigId === config.id"
-          @click="onClickConfig" @run="onClickRunConfig" @stop="onClickStopConfig">
+          v-for="test in tests" :key="test.id"
+          :test="test" :is-active="selectedTestId === test.id"
+          @click="onClickTest" @run="onClickRunTest" @stop="onClickStopTest">
         </TestListItem>
       </draggable>
     </div>
@@ -31,14 +31,14 @@ import router from '@/router/';
 import TestListItem from './TestListItem';
 import Dropdown from './Dropdown';
 import Storage from '@/../lib/storage';
-import Config from '@/store/models/Config';
+import Test from '@/store/models/Test';
 import { mapGetters } from 'vuex';
 import draggable from 'vuedraggable';
 
 const { dialog } = require('electron').remote;
 
 export default {
-  name: 'configs',
+  name: 'tests',
   components: {
     TestListItem,
     Dropdown,
@@ -75,9 +75,9 @@ export default {
         return;
       }
       try {
-        const configs = await new Storage().importConfigs(filePaths[0]);
-        if (configs) {
-          this.$store.dispatch('Config/importConfigs', configs);
+        const tests = await new Storage().importTests(filePaths[0]);
+        if (tests) {
+          this.$store.dispatch('Test/importTests', tests);
           this.$dvlt.notify('Importing...');
         }
       }
@@ -87,8 +87,8 @@ export default {
     },
     async onExportFileSelected(filePath) {
       try {
-        const configs = this.configs.map(config => new Config(config).toJSON());
-        await new Storage().exportConfigs(filePath, configs);
+        const tests = this.tests.map(test => new Test(test).toJSON());
+        await new Storage().exportTests(filePath, tests);
         this.$dvlt.notify(`Your tests were exported to: ${filePath}!`);
       }
       catch (err) {
@@ -102,34 +102,34 @@ export default {
       }
     },
     onStopDragging(e) {
-      this.$store.dispatch('Config/reorderConfig', {
+      this.$store.dispatch('Test/reorderTest', {
         oldIndex: e.oldIndex,
         newIndex: e.newIndex,
       });
     },
     onClickAdd() {
-      this.$store.dispatch('Config/selectConfig', null);
+      this.$store.dispatch('Test/selectTest', null);
       this.$router.push({ name: 'test-create' });
     },
-    onClickConfig(config) {
-      this.$store.dispatch('Config/selectConfig', config.id);
-      this.$router.push({ name: 'test', params: { config_id: config.id } });
+    onClickTest(test) {
+      this.$store.dispatch('Test/selectTest', test.id);
+      this.$router.push({ name: 'test', params: { test_id: test.id } });
     },
-    onClickRunConfig(config) {
-      this.$store.dispatch('Config/selectConfig', config.id);
-      this.$router.push({ name: 'test', params: { config_id: config.id } });
-      this.$store.dispatch('Job/startJob', config.id);
+    onClickRunTest(test) {
+      this.$store.dispatch('Test/selectTest', test.id);
+      this.$router.push({ name: 'test', params: { test_id: test.id } });
+      this.$store.dispatch('Job/startJob', test.id);
     },
-    onClickStopConfig(config) {
-      this.$store.dispatch('Config/selectConfig', config.id);
-      this.$router.push({ name: 'test', params: { config_id: config.id } });
-      this.$store.dispatch('Job/stopJob', config.id);
+    onClickStopTest(test) {
+      this.$store.dispatch('Test/selectTest', test.id);
+      this.$router.push({ name: 'test', params: { test_id: test.id } });
+      this.$store.dispatch('Job/stopJob', test.id);
     },
   },
   computed: {
     ...mapGetters({
-      configs: 'Config/getConfigs',
-      selectedConfigId: 'Config/getSelectedConfigId',
+      tests: 'Test/getTests',
+      selectedTestId: 'Test/getSelectedTestId',
     }),
   },
 };

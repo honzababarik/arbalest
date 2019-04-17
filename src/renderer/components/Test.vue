@@ -1,10 +1,10 @@
 <template>
-  <div class="test" v-if="config">
+  <div class="test" v-if="test">
 
     <div class="navbar">
       <div>
-        <h1>{{config.name}}</h1>
-        <h2>{{config.url}}</h2>
+        <h1>{{test.name}}</h1>
+        <h2>{{test.url}}</h2>
       </div>
       <div class="menu">
         <button class="btn btn-transparent" @click="onClickClear" v-if="!isRunning" v-tooltip="'Clear'">
@@ -54,16 +54,17 @@
             <Chart type="bar" :options="summaryChartOptions" :series="summaryChartData" v-if="!isRunning && report" />
           </div>
         </div>
-        <div class="card">
+        <div class="card card-center">
           <div class="header">Elapsed time</div>
           <div class="body">
-            OK
+            <span>{{getElapsedTime}}</span>
           </div>
         </div>
-        <div class="card">
+        <div class="card card-center">
           <div class="header">Remaining time</div>
           <div class="body">
-            OK
+            <span v-if="isRunning && getRemainingTime">{{getRemainingTime}}</span>
+            <span v-else>--</span>
           </div>
         </div>
       </div>
@@ -97,17 +98,23 @@
 <script>
 
   import ResponseListItem from './ResponseListItem';
+  import Timer from '@/../lib/timer';
 
   export default {
-    name: 'config',
+    name: 'test',
     components: {
       ResponseListItem,
     },
     data() {
       return {
-        confidId: null,
-        config: null,
+        testId: null,
+        test: null,
         artillery: null,
+        elapsed: {
+          minutes: 0,
+          seconds: 0,
+          timer: null
+        }
       };
     },
     methods: {
@@ -116,20 +123,20 @@
       },
       clear() {
         console.clear();
-        this.$store.dispatch('Job/clearJob', this.config.id);
+        this.$store.dispatch('Job/clearJob', this.test.id);
       },
       onClickStop() {
-        this.$store.dispatch('Job/stopJob', this.config.id);
+        this.$store.dispatch('Job/stopJob', this.test.id);
       },
       async onClickRun() {
         this.clear();
-        this.$store.dispatch('Job/startJob', this.config.id);
+        this.$store.dispatch('Job/startJob', this.test.id);
       },
       onClickRunCloud() {
         // Integrate running in cloud
       },
       onClickEdit() {
-        this.$router.push({ name: 'test-edit', params: { config_id: this.config.id } });
+        this.$router.push({ name: 'test-edit', params: { test_id: this.test.id } });
       },
       getDisplayLog(log) {
         const time = log.time.toLocaleString();
@@ -142,7 +149,7 @@
         }
         if (confirm('Are you sure you want to delete this test?')) {
           this.$router.push({ name: 'home' });
-          this.$store.dispatch('Config/deleteConfig', this.config.id);
+          this.$store.dispatch('Test/deleteTest', this.test.id);
         }
       },
       getStatusCodeColor(statusCode) {
@@ -157,6 +164,16 @@
         }
         return '#246EC3';
       },
+      startElapsedTimer() {
+        this.elapsed.timer.start()
+      },
+      stopElapsedTimer() {
+        this.elapsed.timer.stop()
+      },
+      onElapsedTimerTick(e) {
+        this.elapsed.minutes = e.minutes;
+        this.elapsed.seconds = e.seconds;
+      }
     },
     watch: {
       'job.responses': function (is, was) {
@@ -165,10 +182,18 @@
       'job.logs': function (is, was) {
         this.$refs.terminal.scroll();
       },
+      'job.is_running': function (isRunning, wasRunning) {
+        if (isRunning && !wasRunning) {
+          this.startElapsedTimer()
+        }
+        if (!isRunning && wasRunning) {
+          this.stopElapsedTimer()
+        }
+      },
     },
     computed: {
       job() {
-        return this.config ? this.$store.getters['Job/getJobByConfigId'](this.config.id) : null;
+        return this.test ? this.$store.getters['Job/getJobByTestId'](this.test.id) : null;
       },
       settings() {
         return this.$store.getters['Settings/getSettings'];
@@ -190,15 +215,24 @@
       },
       errors() {
         const errors = [];
-        if (this.config.scenarios.length === 0) {
+        if (this.test.scenarios.length === 0) {
           errors.push({ text: "Test is missing scenarios. Running this test won't produce any results.", type: 'danger' });
         }
         return errors;
       },
       getProgressStyle() {
-        // TODO calculate
+        // TODO show progress
         const progress = 25;
         return `width: ${progress}%`;
+      },
+      getElapsedTime() {
+        if (this.elapsed.minutes === 0 && this.elapsed.seconds === 0) {
+          return '--'
+        }
+        return `${this.elapsed.minutes}m ${this.elapsed.seconds}s`
+      },
+      getRemainingTime() {
+        return '--'
       },
       shouldShowCharts() {
         return this.responses.length > 0;
@@ -239,6 +273,9 @@
                 size: '70%',
                 labels: {
                   show: true,
+                  name: {
+                    show: false
+                  },
                   total: {
                     show: true,
                     label: '',
@@ -252,7 +289,7 @@
           },
           dataLabels: {
             formatter(val) {
-              return `${val}%`;
+              return `${Math.floor(val)}%`;
             },
             dropShadow: {
               enabled: false,
@@ -371,10 +408,16 @@
         this.$refs.terminal.scroll();
       }
     },
+    beforeDestroy() {
+      this.stopElapsedTimer();
+      this.elapsed.timer.removeAllListeners();
+    },
     created() {
       const params = this.$router.currentRoute.params;
-      this.configId = params.config_id;
-      this.config = this.$store.getters['Config/getConfig'](this.configId);
+      this.testId = params.test_id;
+      this.test = this.$store.getters['Test/getTest'](this.testId);
+      this.elapsed.timer = new Timer();
+      this.elapsed.timer.on('tick', this.onElapsedTimerTick)
     },
   };
 
@@ -494,6 +537,13 @@
         display: block;
       }
     }
+    &.card-center {
+      .body {
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+      }
+    }
   }
 
   .icon-view {
@@ -549,7 +599,7 @@
       color: $chart-legend-color !important;
     }
     .apexcharts-datalabels-group {
-      transform: translate(0, -23px);
+      transform: translate(0, -10px);
     }
     .apexcharts-datalabel-label, .apexcharts-datalabel-value {
       text-transform: uppercase;

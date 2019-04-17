@@ -1,22 +1,22 @@
 <template>
 
-  <Panel :header="isCreate ? 'Create Test' : 'Edit Test'" css='panel-config'>
+  <Panel :header="isCreate ? 'Create Test' : 'Edit Test'" css='panel-test'>
     <div class="form-group" :class="{'error': this.hasError('name')}">
       <label>Name</label>
-      <input type="text" v-model.trim="config.name" placeholder="New Load Test">
+      <input type="text" v-model.trim="test.name" placeholder="New Load Test">
     </div>
     <div class="form-group" :class="{'error': this.hasError('url')}">
       <label>URL</label>
-      <input type="text" v-model.trim="config.url" placeholder="https://example.com">
+      <input type="text" v-model.trim="test.url" placeholder="https://example.com">
     </div>
     <div class="d-flex">
       <div class="form-group right-sm" :class="{'error': this.hasError('duration')}">
         <label>Duration (in seconds)</label>
-        <input type="number" v-model.number="config.duration">
+        <input type="number" v-model.number="test.duration">
       </div>
       <div class="form-group left-sm" :class="{'error': this.hasError('rate')}">
         <label>Rate</label>
-        <input type="number" v-model.number="config.rate">
+        <input type="number" v-model.number="test.rate">
       </div>
     </div>
 
@@ -24,7 +24,7 @@
 
     <div class="form-group" :class="{'error': this.hasError('headers')}">
       <label>Headers</label>
-      <div class="d-flex bottom-sm" v-for="(header, i) in config.headers" :key="i">
+      <div class="d-flex bottom-sm" v-for="(header, i) in test.headers" :key="i">
         <input class="form-control form-control-xs flex-1" type="text" v-model.trim="header.name" placeholder="Name">
         <input class="form-control form-control-xs flex-1 left-sm" type="text" v-model.trim="header.value" placeholder="Value">
         <button class="btn left-sm btn-xs" @click="onClickRemoveHeader(i)">Remove</button>
@@ -37,7 +37,7 @@
     <div class="form-group" :class="{'error': this.hasError('scenarios')}">
       <label>Scenarios</label>
       <ScenarioListItem
-        v-for="(scenario, i) in config.scenarios" :key="i" :scenario="scenario" :base-url="config.url"
+        v-for="(scenario, i) in test.scenarios" :key="i" :scenario="scenario" :base-url="test.url"
         @remove="onClickRemoveScenario" @edit="onClickEditScenario" />
     </div>
     <button class="btn btn-info btn-xs" @click="onClickAddScenario">Add Scenario</button>
@@ -68,8 +68,8 @@
     },
     data() {
       return {
-        configId: null,
-        config: {
+        testId: null,
+        test: {
           name: `New Test [${Math.floor(Math.random() * 1000)}]`,
           url: null,
           duration: 10,
@@ -86,39 +86,39 @@
       },
       onClickAddScenario() {
         this.$modal.show(ScenarioModal, {
-          baseUrl: this.config.url,
+          baseUrl: this.test.url,
           onSaved: this.onScenarioAdded,
         }, { height: 'auto' });
       },
       onScenarioAdded(scenario) {
-        this.config.scenarios.push(scenario);
+        this.test.scenarios.push(scenario);
       },
       onScenarioEdited(newScenario, scenario) {
-        const index = this.config.scenarios.findIndex(s => s === scenario);
+        const index = this.test.scenarios.findIndex(s => s === scenario);
         if (index !== -1) {
-          this.config.scenarios[index] = newScenario;
+          this.test.scenarios[index] = newScenario;
         }
       },
       onClickEditScenario(scenario) {
         this.$modal.show(ScenarioModal, {
-          baseUrl: this.config.url,
+          baseUrl: this.test.url,
           onSaved: this.onScenarioEdited,
           editedScenario: scenario,
         }, { height: 'auto' });
       },
       onClickAddHeader() {
-        this.config.headers.push({ name: null, value: null });
+        this.test.headers.push({ name: null, value: null });
       },
       onClickRemoveHeader(index) {
-        this.config.headers.splice(index, 1);
+        this.test.headers.splice(index, 1);
       },
       onChangeScenarioMethod(scenario, method) {
         scenario.method = method;
       },
       onClickRemoveScenario(scenario) {
-        const index = this.config.scenarios.findIndex(s => s === scenario);
+        const index = this.test.scenarios.findIndex(s => s === scenario);
         if (index !== -1) {
-          this.config.scenarios.splice(index, 1);
+          this.test.scenarios.splice(index, 1);
         }
       },
       hasError(field) {
@@ -126,16 +126,16 @@
       },
       isValidForm() {
         const errors = [];
-        if (this.config.name.length === 0) {
+        if (this.test.name.length === 0) {
           errors.push('name');
         }
-        if (!this.$dvlt.validator.isValidBaseURL(this.config.url)) {
+        if (!this.$dvlt.validator.isValidBaseURL(this.test.url)) {
           errors.push('url');
         }
-        if (this.config.duration < 1) {
+        if (this.test.duration < 1) {
           errors.push('duration');
         }
-        if (this.config.rate < 1) {
+        if (this.test.rate < 1) {
           errors.push('rate');
         }
 
@@ -147,60 +147,60 @@
           return;
         }
 
-        const config = this.config;
+        const test = this.test;
         const data = {
-          id: config.id,
-          name: config.name,
-          url: config.url,
-          duration: config.duration,
-          rate: config.rate,
+          id: test.id,
+          name: test.name,
+          url: test.url,
+          duration: test.duration,
+          rate: test.rate,
           headers: this.getHeaders(),
           scenarios: this.getScenarios(),
         };
 
         if (this.isCreate) {
           data.id = this.$dvlt.utils.guid();
-          this.createConfig(data);
-          this.$dvlt.notify('Config was created!');
+          this.createTest(data);
+          this.$dvlt.notify('Test was created!');
         }
         else {
           this.$dvlt.notify('Your changes were saved!');
-          this.updateConfig(data);
+          this.updateTest(data);
         }
 
-        this.$store.dispatch('Config/selectConfig', data.id);
-        this.$router.push({ name: 'test', params: { config_id: data.id } });
+        this.$store.dispatch('Test/selectTest', data.id);
+        this.$router.push({ name: 'test', params: { test_id: data.id } });
       },
-      createConfig(data) {
-        this.$store.dispatch('Config/addConfig', data);
+      createTest(data) {
+        this.$store.dispatch('Test/addTest', data);
       },
-      updateConfig(data) {
-        this.$store.dispatch('Config/updateConfig', {
-          id: this.configId,
+      updateTest(data) {
+        this.$store.dispatch('Test/updateTest', {
+          id: this.testId,
           data,
         });
       },
       getHeaders() {
-        return this.config.headers.filter((header) => {
+        return this.test.headers.filter((header) => {
           return header.name && header.value;
         });
       },
       getScenarios() {
-        return this.config.scenarios.filter((scenario) => {
+        return this.test.scenarios.filter((scenario) => {
           return scenario.method && this.$dvlt.validator.isValidURLPath(scenario.url);
         });
       },
     },
     computed: {
       isCreate() {
-        return this.configId === null;
+        return this.testId === null;
       },
     },
     mounted() {
-      const configId = this.$router.currentRoute.params.config_id;
-      if (configId) {
-        this.configId = configId;
-        this.config = JSON.parse(JSON.stringify(this.$store.getters['Config/getConfig'](configId)));
+      const testId = this.$router.currentRoute.params.test_id;
+      if (testId) {
+        this.testId = testId;
+        this.test = JSON.parse(JSON.stringify(this.$store.getters['Test/getTest'](testId)));
       }
     },
   };
@@ -211,7 +211,7 @@
 
   @import "../styles/vars.scss";
 
-  .panel-config {
+  .panel-test {
     .panel-body {
       flex: 1;
       padding: 15px 10px;

@@ -1,4 +1,4 @@
-class Config {
+class Test {
 
   static schema = {
     id: String,
@@ -36,21 +36,21 @@ class Config {
 
   create(data, model = this) {
     this.validate(data);
-    return this._updateFields(Config.all, data, model);
+    return this._updateFields(Test.all, data, model);
   }
 
   update(data, model = this) {
-    return this._updateFields(Config.updateable, data, model);
+    return this._updateFields(Test.updateable, data, model);
   }
 
   mergeTo(model) {
-    return this._updateFields(Config.updateable, this, model);
+    return this._updateFields(Test.updateable, this, model);
   }
 
   toJSON() {
     const model = {};
-    Object.keys(Config.visible).forEach((i) => {
-      const field = Config.visible[i];
+    Object.keys(Test.visible).forEach((i) => {
+      const field = Test.visible[i];
       model[field] = this[field];
     });
     return model;
@@ -58,4 +58,4 @@ class Config {
 
 }
 
-export default Config;
+export default Test;

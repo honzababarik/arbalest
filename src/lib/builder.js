@@ -29,23 +29,23 @@ const toScenariosJSON = (scenarios) => {
 
 class ConfigBuilder {
 
-  constructor(config, settings, environment) {
-    this.targetUrl = config.url;
-    this.duration = config.duration;
-    this.rate = config.rate;
+  constructor(test, settings, environment) {
+    this.targetUrl = test.url;
+    this.duration = test.duration;
+    this.rate = test.rate;
     this.timeout = settings.request.timeout || null;
     this.pool = settings.request.pool || null;
     this.headers = {};
     this.scenarios = [];
     this.variables = {};
 
-    for (let i = 0; i < config.headers.length; i++) {
-      const header = config.headers[i];
+    for (let i = 0; i < test.headers.length; i++) {
+      const header = test.headers[i];
       this.addHeader(header.name, header.value);
     }
 
-    for (let i = 0; i < config.scenarios.length; i++) {
-      const scenario = config.scenarios[i];
+    for (let i = 0; i < test.scenarios.length; i++) {
+      const scenario = test.scenarios[i];
       this.addScenario(scenario);
     }
 

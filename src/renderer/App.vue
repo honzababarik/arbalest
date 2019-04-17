@@ -27,7 +27,7 @@
       </div>
     </div>
     <modals-container />
-    <Artillery v-for="job in jobs" :job="job" :settings="settings" :environment="selectedEnvironment" :key="job.config_id" />
+    <Artillery v-for="job in jobs" :job="job" :settings="settings" :environment="selectedEnvironment" :key="job.test_id" />
   </div>
 </template>
 
@@ -40,10 +40,13 @@
   import EnvironmentModal from './views/EnvironmentModal';
   import Artillery from './components/Artillery';
 
-  // TODO fix: report should not get parsed for a job if rerun
+  // Add to the job from config:
+  // job.duration = config.duration;
+  // job.rate = config;
 
-  // TODO show elapsed time
-  // TODO show remaining time guess
+  // TODO show remaining time
+
+  // TODO fix: report should not get parsed for a job if rerun
 
   // TODO show progress on Test
   // TODO show progres on Test Item
@@ -161,6 +164,10 @@
     .value {
       height: inherit;
       background-color: $progress-color;
+    }
+    &.progress-sm {
+      border-top: 0;
+      height: 6px;
     }
   }
 
