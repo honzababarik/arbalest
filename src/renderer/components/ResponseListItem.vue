@@ -7,7 +7,7 @@
         <div class="url">{{response.url}}</div>
       </div>
       <div>
-        <div class="time">{{response.time}}ms</div>
+        <div class="time">~{{response.time}}ms</div>
       </div>
     </div>
     <div class="side" v-if="isExpanded">

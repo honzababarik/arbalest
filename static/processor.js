@@ -12,10 +12,9 @@ function getContentType(headers) {
 }
 
 function afterResponse(requestParams, response, context, ee, next) {
-  const contentType = getContentType(response.headers);
   const startedAt = context.vars.startedAt;
   const endedAt = Date.now();
-
+  const contentType = getContentType(response.headers);
   const log = {
     type: 'response',
     data: {
@@ -31,12 +30,7 @@ function afterResponse(requestParams, response, context, ee, next) {
   if (contentType === 'application/json') {
     log.data.data = response.body;
   }
-  try {
-    console.log(JSON.stringify(log));
-  }
-  catch (err) {
-    console.error('FAILED STRINGIGYING...');
-  }
+  console.log(JSON.stringify(log));
   return next();
 }
 

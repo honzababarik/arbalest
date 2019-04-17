@@ -39,7 +39,7 @@
 
     <div class="content">
       <div class="row flex-1 bottom-md" v-if="shouldShowCharts">
-        <div class="card">
+        <div class="card card-absolute">
           <div class="header">Response Codes</div>
           <div class="body">
             <Chart type="donut" height="100%" :options="codesChartOptions" :series="codesChartOptions.series" />
@@ -50,8 +50,8 @@
           <div class="body">
             <div class="icon-view" v-if="isRunning">
               <Icon icon='hourglass' :spin='true' size='2x' />
-              <span>Collecting...</span>
             </div>
+            <Chart type="bar" :options="summaryChartOptions" :series="summaryChartData" v-if="!isRunning && report" />
           </div>
         </div>
         <div class="card">
@@ -156,7 +156,7 @@
           return '#923C3C';
         }
         return '#246EC3';
-      }
+      },
     },
     watch: {
       'job.responses': function (is, was) {
@@ -185,6 +185,9 @@
       logs() {
         return this.job ? this.job.logs : [];
       },
+      report() {
+        return this.job ? this.job.report : null;
+      },
       errors() {
         const errors = [];
         if (this.config.scenarios.length === 0) {
@@ -198,33 +201,33 @@
         return `width: ${progress}%`;
       },
       shouldShowCharts() {
-        return this.responses.length > 0
+        return this.responses.length > 0;
       },
       codesChartOptions() {
         const options = {
           colors: [],
           labels: [],
-          series: []
-        }
+          series: [],
+        };
 
-        this.responses.forEach(response => {
+        this.responses.forEach((response) => {
           const index = options.labels.indexOf(response.status_code);
           if (index === -1) {
-            options.labels.push(response.status_code)
-            options.colors.push(this.getStatusCodeColor(response.status_code))
-            options.series.push(1)
+            options.labels.push(response.status_code);
+            options.colors.push(this.getStatusCodeColor(response.status_code));
+            options.series.push(1);
           }
           else {
-            options.series[index] += 1
+            options.series[index] += 1;
           }
-        })
+        });
 
         return {
           chart: {
-            id: 'chart-codes'
+            id: 'chart-codes',
           },
           legend: {
-            show: false
+            show: false,
           },
           stroke: {
             width: 1,
@@ -238,84 +241,130 @@
                   show: true,
                   total: {
                     show: true,
-                    label: ''
+                    label: '',
                   },
                 },
               },
               dataLabels: {
-                offset: 3
-              }
-            }
+                offset: 3,
+              },
+            },
           },
           dataLabels: {
-            formatter: function (val) {
-              return val + "%"
+            formatter(val) {
+              return `${val}%`;
             },
             dropShadow: {
-              enabled: false
-            }
+              enabled: false,
+            },
           },
-          ...options
+          ...options,
         };
+      },
+      summaryChartOptions() {
+        return {
+          chart: {
+            id: 'chart-summary',
+            toolbar: {
+              show: false
+            },
+          },
+          plotOptions: {
+            bar: {
+              horizontal: false,
+              endingShape: 'rounded',
+              dataLabels: {
+                position: 'top'
+              }
+            },
+          },
+          dataLabels: {
+            offsetY: -20,
+          },
+          tooltip: {
+            enabled: false,
+          },
+          xaxis: {
+            categories: ['min', 'med', 'max', 'p95', 'p99']
+          },
+          yaxis: {
+            show: false,
+          },
+          grid: {
+            show: false,
+          }
+        }
+      },
+      summaryChartData() {
+        const latency = this.report.latency
+        return [{
+          name: 'Latency',
+          data: [
+            latency.min,
+            latency.med,
+            latency.max,
+            latency.p95,
+            latency.p99,
+          ]
+        }]
       },
       latencyChartOptions() {
         return {
           stroke: {
-            curve: 'smooth'
+            curve: 'smooth',
           },
           chart: {
             id: 'chart-latency',
-            type: 'line',
             toolbar: {
               show: true,
               tools: {
-                download: false
-              }
+                download: false,
+              },
             },
           },
           tooltip: {
             x: {
-              show: false
+              show: false,
             },
             fixed: {
               enabled: true,
-              position: 'topLeft'
-            }
+              position: 'topLeft',
+            },
           },
           yaxis: {
             labels: {
               formatter: (latency) => {
-                return `${latency}ms`
-              }
-            }
+                return `${latency}ms`;
+              },
+            },
           },
           xaxis: {
             type: 'numeric',
             labels: {
               formatter: (msSinceStart) => {
-                const sSinceStart = Math.floor(msSinceStart / 1000)
-                return `${sSinceStart}s`
-              }
-            }
+                const sSinceStart = Math.floor(msSinceStart / 1000);
+                return `${sSinceStart}s`;
+              },
+            },
           },
-        }
+        };
       },
       latencyChartData() {
-        const data = this.responses.map(response => {
-          const msSinceStart = response.ended_at - this.job.started_at
+        const data = this.responses.map((response) => {
+          const msSinceStart = response.ended_at - this.job.started_at;
           return {
             x: msSinceStart,
-            y: response.time
-          }
-        })
+            y: response.time,
+          };
+        });
         if (data.length === 0) {
-          return []
+          return [];
         }
         return [{
           name: 'Latency',
-          data: data
-        }]
-      }
+          data,
+        }];
+      },
     },
     mounted() {
       if (this.$refs.terminal) {
@@ -409,6 +458,9 @@
     border-radius: $border-radius;
     background-color: $card-background-color;
     flex: 1;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     padding: 15px;
     overflow-x: hidden;
     overflow-y: scroll;
@@ -419,8 +471,28 @@
       text-align: center;
       margin-bottom: 15px;
     }
+    .body {
+      flex: 1;
+      display: flex;
+    }
     & + .card {
       margin-left: $window-padding;
+    }
+    &.card-absolute {
+      display: block;
+      position: relative;
+      padding: 20px 15px;
+      overflow-y: hidden;
+      .header {
+        position: absolute;
+        top: 15px;
+        left: 0;
+        right: 0;
+      }
+      .body {
+        flex: initial;
+        display: block;
+      }
     }
   }
 
@@ -432,7 +504,9 @@
     align-items: center;
     svg {
       display: block;
-      margin-bottom: 20px;
+    }
+    span {
+      margin-top: 20px;
     }
   }
 

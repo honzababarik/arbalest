@@ -34,11 +34,14 @@ class Storage {
     return JSON.stringify(o, null, 2);
   }
 
-  createTempJSON(o) {
+  async createTempJSON(o) {
     const content = this.getJSONContent(o);
     const fileName = hash(content);
     const filePath = `${process.cwd()}/tmp/${fileName}.json`;
-    return this.createFile(filePath, content);
+    return {
+      path: await this.createFile(filePath, content),
+      name: fileName,
+    };
   }
 
   exportConfigs(filePath, configs) {
@@ -46,9 +49,13 @@ class Storage {
     return this.createFile(filePath, content);
   }
 
-  async importConfigs(filePath) {
+  async getJSONFromFile(filePath) {
     const content = await this.readFile(filePath);
-    return JSON.parse(content);
+    return content ? JSON.parse(content) : null;
+  }
+
+  importConfigs(filePath) {
+    return this.getJSONFromFile(filePath);
   }
 
 }

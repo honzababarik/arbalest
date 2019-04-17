@@ -15,11 +15,11 @@ class Artillery extends Observable {
 
   async run(config, settings, environment = null) {
     const artilleryConfig = new ConfigBuilder(config, settings, environment);
-    const configPath = await new Storage().createTempJSON(artilleryConfig.toJSON());
-    this.emit('line', `Configuration stored under: ${configPath}`);
+    const file = await new Storage().createTempJSON(artilleryConfig.toJSON());
+    this.emit('line', `Configuration stored under: ${file.path}`);
 
-    this.configPath = configPath;
-    this.reportPath = `${configPath}-report.json`;
+    this.configPath = file.path;
+    this.reportPath = `${file.name}-report.json`;
 
     const args = ['run', this.configPath, '-o', this.reportPath];
 
@@ -89,11 +89,18 @@ class Artillery extends Observable {
   onExit = (exitCode) => {
     this.emit('exit', exitCode);
     if (exitCode === 0) {
-      this.emit('report', this.reportPath);
+      this.parseReport(this.reportPath);
     }
     this.pid = null;
     this.configPath = null;
     this.reportPath = null;
+  }
+
+  async parseReport(reportPath) {
+    const report = await new Storage().getJSONFromFile(reportPath);
+    if (report) {
+      this.emit('report', report);
+    }
   }
 
   stop() {

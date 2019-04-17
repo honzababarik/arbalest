@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import Report from '../models/Report';
 
 const state = {
   jobs: {},
@@ -15,22 +16,21 @@ const mutations = {
     if (!job) {
       job = {
         config_id: configId,
-        logs: [],
-        responses: [],
-        report: null,
       };
     }
 
     job.is_running = true;
     job.started_at = Date.now();
-    job.report = {};
+    job.report = null;
+    job.logs = [];
+    job.responses = [];
     Vue.set(state.jobs, configId, job);
   },
   STOP_JOB(state, configId) {
     const job = state.jobs[configId];
     if (job) {
-      Vue.set(job, 'ended_at', Date.now());
-      Vue.set(job, 'is_running', false);
+      job.ended_at = Date.now();
+      job.is_running = false;
     }
   },
   ADD_LOG(state, { configId, log }) {
@@ -43,6 +43,12 @@ const mutations = {
     const job = state.jobs[configId];
     if (job) {
       job.responses.push(response);
+    }
+  },
+  ADD_REPORT(state, { configId, report }) {
+    const job = state.jobs[configId];
+    if (job) {
+      job.report = report;
     }
   },
   CLEAR_JOB(state, configId) {
@@ -70,6 +76,10 @@ const actions = {
   },
   clearJob({ commit }, configId) {
     commit('CLEAR_JOB', configId);
+  },
+  addReport({ commit }, { configId, data }) {
+    const jobReport = new Report(data);
+    commit('ADD_REPORT', { configId, report: jobReport.toJSON() });
   },
 };
 

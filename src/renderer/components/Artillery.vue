@@ -41,10 +41,12 @@
       onError(err) {
         this.addLog(`Err: ${err}`, 'danger');
       },
-      onReport(reportPath) {
-        this.addLog(`Report is available here: ${reportPath}`, 'warning');
-        // TODO parse reportFile
-        // TODO add report to the job
+      onReport(report) {
+        this.addLog(`Report is available!`, 'warning');
+        this.$store.dispatch('Job/addReport', {
+          configId: this.job.config_id,
+          data: report
+        })
       },
       onExit(exitCode) {
         if (exitCode === 0) {

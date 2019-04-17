@@ -76,8 +76,10 @@ export default {
       }
       try {
         const configs = await new Storage().importConfigs(filePaths[0]);
-        this.$store.dispatch('Config/importConfigs', configs);
-        this.$dvlt.notify('Importing...');
+        if (configs) {
+          this.$store.dispatch('Config/importConfigs', configs);
+          this.$dvlt.notify('Importing...');
+        }
       }
       catch (err) {
         console.warn(`Import failed: ${err}`, 'danger');

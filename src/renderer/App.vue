@@ -40,8 +40,7 @@
   import EnvironmentModal from './views/EnvironmentModal';
   import Artillery from './components/Artillery';
 
-  // TODO show latency graph (min, med, max, p99, p95)
-  // TODO process report
+  // TODO fix: report should not get parsed for a job if rerun
 
   // TODO show elapsed time
   // TODO show remaining time guess
