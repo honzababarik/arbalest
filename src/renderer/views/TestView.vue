@@ -99,7 +99,7 @@
 
 <script>
 
-  import ResponseListItem from './ResponseListItem';
+  import ResponseListItem from '@/components/ResponseListItem';
   import Timer from '@/../lib/timer';
 
   const REMAINING_TIME_EST_MIN_RESPONSE_LIMIT = 5

@@ -27,13 +27,13 @@
 
 <script>
 
-import router from '@/router/';
-import TestListItem from './TestListItem';
-import Dropdown from './Dropdown';
-import Storage from '@/../lib/storage';
-import Test from '@/store/models/Test';
 import { mapGetters } from 'vuex';
 import draggable from 'vuedraggable';
+import Storage from '@/../lib/storage';
+import router from '@/router/';
+import TestListItem from '@/components/TestListItem';
+import Dropdown from '@/components/Dropdown';
+import Test from '@/store/models/Test';
 
 const { dialog } = require('electron').remote;
 

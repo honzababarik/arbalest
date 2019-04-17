@@ -57,9 +57,9 @@
 </template>
 
 <script>
-  import Panel from './Panel';
-  import ScenarioListItem from './ScenarioListItem';
-  import ScenarioModal from '../views/ScenarioModal';
+  import Panel from '@/components/Panel';
+  import ScenarioListItem from '@/components/ScenarioListItem';
+  import ScenarioModal from './ScenarioModal';
 
   export default {
     components: {

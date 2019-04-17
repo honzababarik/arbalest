@@ -42,18 +42,21 @@
   import { setInterval, clearInterval } from 'timers';
   import os from 'os-utils';
 
-  import Tests from './components/Tests';
+  import Tests from './views/TestsView';
   import EnvironmentDropdown from './components/EnvironmentDropdown';
   import SettingsModal from './views/SettingsModal';
   import EnvironmentModal from './views/EnvironmentModal';
   import Artillery from './components/Artillery';
 
+  // TODO CPU usage must get better
+  // TODO how come two scenarios after each other have different response times
+  // TODO sort scenarios
+  // TODO fix terminal search in case terminal gets hidden, it stops working
+
   // TODO make it possible to readjust the rate/duration on the Config screen
   // TODO Test configuration more user friendly
 
   // TODO Create app menu + preferences
-
-  // TODO CPU usage must get better
 
   export default {
     name: 'Arbalest',
