@@ -2,6 +2,9 @@ import Vue from 'vue';
 
 const state = {
   settings: {
+    general: {
+      should_display_sys_info: false,
+    },
     request: {
       does_verify_SSL: true,
       does_log_progress: false,
@@ -23,6 +26,9 @@ const mutations = {
   CHANGE_REQUEST_SETTINGS(state, { key, value }) {
     Vue.set(state.settings.request, key, value);
   },
+  CHANGE_GENERAL_SETTINGS(state, { key, value }) {
+    Vue.set(state.settings.general, key, value);
+  },
 };
 
 const actions = {
@@ -31,6 +37,9 @@ const actions = {
   },
   changeRequestSettings({ commit }, payload) {
     commit('CHANGE_REQUEST_SETTINGS', payload);
+  },
+  changeGeneralSettings({ commit }, payload) {
+    commit('CHANGE_GENERAL_SETTINGS', payload);
   },
 };
 

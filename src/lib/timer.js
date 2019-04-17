@@ -1,4 +1,6 @@
+import { setInterval, clearInterval } from 'timers';
 import Observable from './observable';
+
 
 class Timer extends Observable {
 

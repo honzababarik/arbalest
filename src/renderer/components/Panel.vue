@@ -31,6 +31,7 @@
       header: String,
       css: String,
       isCollapsible: { type: Boolean, default: false },
+      isCollapsed: { type: Boolean, default: false },
       isSearchable: { type: Boolean, default: false },
     },
     data() {
@@ -41,7 +42,7 @@
           matches: 0,
           $results: [],
         },
-        isExpanded: true,
+        isExpanded: !this.isCollapsed,
         marker: null,
       };
   },
@@ -167,6 +168,7 @@
     }
     &.collapsed {
       flex: initial !important;
+      height: 50px;
     }
 
     &.panel-terminal {

@@ -90,7 +90,7 @@
       </div>
     </div>
 
-    <Panel header='Terminal' css='panel-terminal' ref="terminal" :is-collapsible="true" :is-searchable="true">
+    <Panel header='Terminal' css='panel-terminal' ref="terminal" :is-collapsible="true" :is-collapsed="true" :is-searchable="true">
       <div v-for="(log, i) in logs" :key="i" :class="log.css" slot="default">{{getDisplayLog(log)}}</div>
     </Panel>
 
@@ -118,6 +118,10 @@
           minutes: 0,
           seconds: 0,
           timer: null
+        },
+        remaining: {
+          minutes: 0,
+          seconds: 0
         }
       };
     },
@@ -177,6 +181,13 @@
       onElapsedTimerTick(e) {
         this.elapsed.minutes = e.minutes;
         this.elapsed.seconds = e.seconds;
+        if (this.getMaxResponses && this.responses.length >= REMAINING_TIME_EST_MIN_RESPONSE_LIMIT) {
+          const elapsedSeconds = this.elapsed.minutes * 60 + this.elapsed.seconds;
+          const estimatedSeconds = Math.floor(this.getMaxResponses / this.responses.length * elapsedSeconds)
+          const remainingTime = this.$dvlt.time.getTimeUnits(estimatedSeconds - elapsedSeconds);
+          this.remaining.minutes = remainingTime.minutes
+          this.remaining.seconds = remainingTime.seconds
+        }
       }
     },
     watch: {
@@ -239,22 +250,16 @@
         return `width: ${this.getProgressPerc}%`;
       },
       getElapsedTime() {
-        if (this.elapsed.minutes && this.elapsed.seconds) {
+        if (!this.elapsed.minutes && !this.elapsed.seconds) {
           return '--'
         }
         return `${this.elapsed.minutes}m ${this.elapsed.seconds}s`
       },
       getRemainingTime() {
-        if (!this.isRunning) {
+        if (!this.remaining.minutes && !this.remaining.seconds) {
           return '--'
         }
-        if (!this.getMaxResponses || this.responses.length < REMAINING_TIME_EST_MIN_RESPONSE_LIMIT) {
-          return null;
-        }
-        const elapsedSeconds = this.elapsed.minutes * 60 + this.elapsed.seconds;
-        const remainingSeconds = Math.floor(this.getMaxResponses / this.responses.length * elapsedSeconds)
-        const remainingTime = this.$dvlt.time.getTimeUnits(remainingSeconds);
-        return `${remainingTime.minutes}m ${remainingTime.seconds}s`;
+        return `${this.remaining.minutes}m ${this.remaining.seconds}s`;
       },
       shouldShowCharts() {
         return this.responses.length > 0;
@@ -454,7 +459,6 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    height: 100vh;
 
     .navbar {
       display: flex;
@@ -544,7 +548,7 @@
       margin-left: $window-padding;
     }
     &.card-absolute {
-      display: block;
+      justify-content: center;
       position: relative;
       padding: 20px 15px;
       overflow-y: hidden;

@@ -3,7 +3,12 @@
     <notifications position="top center" />
     <div class="titlebar" :style="getTitlebarCss">
       <div></div>
-      <div class="title">Arbalest</div>
+      <div class="title">Arbalest
+        <div class="system" v-if="shouldDisplaySysInfo">
+          <span>CPU: {{cpu.toFixed(0)}}%</span>
+          <span>MEM: {{memory.used.toFixed(0)}}/{{memory.total}} MB [Free: {{memory.perc.toFixed(2)}}%]</span>
+        </div>
+      </div>
       <div class="text-right">
         <EnvironmentDropdown
           placeholder='No Environment'
@@ -34,34 +39,21 @@
 <script>
 
   import { remote } from 'electron';
+  import { setInterval, clearInterval } from 'timers';
+  import os from 'os-utils';
+
   import Tests from './components/Tests';
   import EnvironmentDropdown from './components/EnvironmentDropdown';
   import SettingsModal from './views/SettingsModal';
   import EnvironmentModal from './views/EnvironmentModal';
   import Artillery from './components/Artillery';
 
-  // TODO show CPU/mem usage
-
-  // TODO fix positioning of responses/terminal
   // TODO make it possible to readjust the rate/duration on the Config screen
-
   // TODO Test configuration more user friendly
 
   // TODO Create app menu + preferences
 
-  // Next:
-  // Scenario: Capture variables
-  // Scenario: Add type Sleep
-  // Test: Run via AWS
-  // Test: History of Runs
-
-  // Variable randomizer
-  // UX: Folderize tests
-
-  // Scenario: Multipart
-  // Scenario: Add Cookies
-  // Scenario: Attach Before Request script
-  // Scenario: Attach After Response script
+  // TODO CPU usage must get better
 
   export default {
     name: 'Arbalest',
@@ -69,6 +61,17 @@
       Tests,
       EnvironmentDropdown,
       Artillery,
+    },
+    data() {
+      return {
+        cpu: 0,
+        memory: {
+          used: 0,
+          total: 0,
+          perc: 0
+        },
+        measurementId: null
+      }
     },
     methods: {
       onClickSettings() {
@@ -87,6 +90,14 @@
           height: 'auto',
         });
       },
+      async onMeasurement() {
+        os.cpuUsage((v) => {
+          this.cpu = v * 100;
+        });
+        this.memory.total = os.totalmem();
+        this.memory.used = this.memory.total - os.freemem();
+        this.memory.perc = os.freememPercentage();
+      }
     },
     computed: {
       jobs() {
@@ -105,7 +116,18 @@
         const color = this.selectedEnvironment ? this.selectedEnvironment.color : '#1fd6a6';
         return `border-bottom-color: ${color}`;
       },
+      shouldDisplaySysInfo() {
+        return this.settings.general.should_display_sys_info;
+      },
     },
+    beforeDestroy() {
+      clearInterval(this.measurementId);
+    },
+    mounted() {
+      // TODO cannot be mounted in case user settings changes
+      this.measurementId = setInterval(this.onMeasurement, 2000);
+      this.onMeasurement()
+    }
   };
 
 </script>
@@ -326,6 +348,17 @@
       display: flex;
       align-items: center;
       justify-content: flex-end;
+    }
+    .system {
+      margin-left: 10px;
+      display: flex;
+      flex-direction: column;
+      font-size: 10px;
+      color: $text-color-dark;
+    }
+    .title {
+      display: flex;
+      align-items: center;
     }
   }
 
