@@ -37,7 +37,7 @@ class Storage {
   async createTempJSON(o) {
     const content = this.getJSONContent(o);
     const fileName = hash(content);
-    const basePath = `${process.cwd()}/tmp/`;
+    const basePath = 'tmp/';
     const filePath = `${basePath}${fileName}.json`;
     return {
       filePath: await this.createFile(filePath, content),

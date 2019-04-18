@@ -44,7 +44,7 @@
         currentTab: 'General',
         tabs: [
           'General',
-          'Request'
+          'Request',
         ],
         requestItems: [
           {

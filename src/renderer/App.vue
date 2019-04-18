@@ -71,10 +71,10 @@
         memory: {
           used: 0,
           total: 0,
-          perc: 0
+          perc: 0,
         },
-        measurementId: null
-      }
+        measurementId: null,
+      };
     },
     methods: {
       onClickSettings() {
@@ -102,25 +102,25 @@
         this.memory.perc = os.freememPercentage();
       },
       startMeasurement() {
-        this.stopMeasurement()
+        this.stopMeasurement();
         this.measurementId = setInterval(this.onMeasurement, 2000);
       },
       stopMeasurement() {
-        clearInterval(this.measurementId)
-      }
+        clearInterval(this.measurementId);
+      },
     },
     watch: {
       shouldDisplaySysInfo: {
         immediate: true,
         handler(isDisplay, wasDisplay) {
           if (isDisplay && !wasDisplay) {
-            this.startMeasurement()
+            this.startMeasurement();
           }
           if (!isDisplay && wasDisplay) {
-            this.stopMeasurement()
+            this.stopMeasurement();
           }
-        }
-      }
+        },
+      },
     },
     computed: {
       jobs() {
@@ -144,11 +144,11 @@
       },
     },
     beforeDestroy() {
-      this.stopMeasurement()
+      this.stopMeasurement();
     },
     mounted() {
-      this.onMeasurement()
-    }
+      this.onMeasurement();
+    },
   };
 
 </script>

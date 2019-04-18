@@ -102,7 +102,7 @@
   import ResponseListItem from '@/components/ResponseListItem';
   import Timer from '@/../lib/timer';
 
-  const REMAINING_TIME_EST_MIN_RESPONSE_LIMIT = 5
+  const REMAINING_TIME_EST_MIN_RESPONSE_LIMIT = 5;
 
   export default {
     name: 'test',
@@ -117,12 +117,12 @@
         elapsed: {
           minutes: 0,
           seconds: 0,
-          timer: null
+          timer: null,
         },
         remaining: {
           minutes: 0,
-          seconds: 0
-        }
+          seconds: 0,
+        },
       };
     },
     methods: {
@@ -173,22 +173,22 @@
         return '#246EC3';
       },
       startElapsedTimer() {
-        this.elapsed.timer.start()
+        this.elapsed.timer.start();
       },
       stopElapsedTimer() {
-        this.elapsed.timer.stop()
+        this.elapsed.timer.stop();
       },
       onElapsedTimerTick(e) {
         this.elapsed.minutes = e.minutes;
         this.elapsed.seconds = e.seconds;
         if (this.getMaxResponses && this.responses.length >= REMAINING_TIME_EST_MIN_RESPONSE_LIMIT) {
           const elapsedSeconds = this.elapsed.minutes * 60 + this.elapsed.seconds;
-          const estimatedSeconds = Math.floor(this.getMaxResponses / this.responses.length * elapsedSeconds)
+          const estimatedSeconds = Math.floor(this.getMaxResponses / this.responses.length * elapsedSeconds);
           const remainingTime = this.$dvlt.time.getTimeUnits(estimatedSeconds - elapsedSeconds);
-          this.remaining.minutes = remainingTime.minutes
-          this.remaining.seconds = remainingTime.seconds
+          this.remaining.minutes = remainingTime.minutes;
+          this.remaining.seconds = remainingTime.seconds;
         }
-      }
+      },
     },
     watch: {
       'job.responses': function (is, was) {
@@ -199,10 +199,10 @@
       },
       'job.is_running': function (isRunning, wasRunning) {
         if (isRunning && !wasRunning) {
-          this.startElapsedTimer()
+          this.startElapsedTimer();
         }
         if (!isRunning && wasRunning) {
-          this.stopElapsedTimer()
+          this.stopElapsedTimer();
         }
       },
     },
@@ -251,13 +251,13 @@
       },
       getElapsedTime() {
         if (!this.elapsed.minutes && !this.elapsed.seconds) {
-          return '--'
+          return '--';
         }
-        return `${this.elapsed.minutes}m ${this.elapsed.seconds}s`
+        return `${this.elapsed.minutes}m ${this.elapsed.seconds}s`;
       },
       getRemainingTime() {
         if (!this.remaining.minutes && !this.remaining.seconds) {
-          return '--'
+          return '--';
         }
         return `${this.remaining.minutes}m ${this.remaining.seconds}s`;
       },
@@ -301,7 +301,7 @@
                 labels: {
                   show: true,
                   name: {
-                    show: false
+                    show: false,
                   },
                   total: {
                     show: true,
@@ -330,7 +330,7 @@
           chart: {
             id: 'chart-summary',
             toolbar: {
-              show: false
+              show: false,
             },
           },
           plotOptions: {
@@ -338,8 +338,8 @@
               horizontal: false,
               endingShape: 'rounded',
               dataLabels: {
-                position: 'top'
-              }
+                position: 'top',
+              },
             },
           },
           dataLabels: {
@@ -349,18 +349,18 @@
             enabled: false,
           },
           xaxis: {
-            categories: ['min', 'med', 'max', 'p95', 'p99']
+            categories: ['min', 'med', 'max', 'p95', 'p99'],
           },
           yaxis: {
             show: false,
           },
           grid: {
             show: false,
-          }
-        }
+          },
+        };
       },
       summaryChartData() {
-        const latency = this.report.latency
+        const latency = this.report.latency;
         return [{
           name: 'Latency',
           data: [
@@ -369,8 +369,8 @@
             latency.max,
             latency.p95,
             latency.p99,
-          ]
-        }]
+          ],
+        }];
       },
       latencyChartOptions() {
         return {
@@ -444,7 +444,7 @@
       this.testId = params.test_id;
       this.test = this.$store.getters['Test/getTest'](this.testId);
       this.elapsed.timer = new Timer();
-      this.elapsed.timer.on('tick', this.onElapsedTimerTick)
+      this.elapsed.timer.on('tick', this.onElapsedTimerTick);
     },
   };
 

@@ -54,6 +54,10 @@
         this.isExpanded = !this.isExpanded;
         if (this.isExpanded) {
           this.scroll();
+          this.registerMarker();
+        }
+        else {
+          this.resetSearch();
         }
       },
       scroll() {
@@ -62,6 +66,25 @@
             this.$refs.body.scrollTop = this.$refs.body.scrollHeight - this.$refs.body.clientHeight;
           });
         }
+      },
+      resetSearch() {
+        this.search = {
+          index: 0,
+          query: null,
+          matches: 0,
+          $results: [],
+        };
+        if (this.marker) {
+          this.marker.unmark()
+        }
+      },
+      registerMarker() {
+        this.resetSearch();
+        this.$nextTick(() => {
+          if (this.isSearchable) {
+            this.marker = new Mark(this.$refs.body);
+          }
+        })
       },
       onKeyUpSearch(e) {
         if (e.keyCode === this.$dvlt.consts.KEY_ENTER) {
@@ -94,14 +117,16 @@
         this.search.index = newIndex;
       },
       markSearch(query) {
-        this.marker.unmark({
-          done: () => {
-            this.marker.mark(query, {
-              done: this.onSearchDone,
-              noMatch: () => this.onSearchDone(0),
-            });
-          },
-        });
+        if (this.marker) {
+          this.marker.unmark({
+            done: () => {
+              this.marker.mark(query, {
+                done: this.onSearchDone,
+                noMatch: () => this.onSearchDone(0),
+              });
+            },
+          });
+        }
       },
     },
     watch: {
@@ -119,9 +144,7 @@
       },
     },
     mounted() {
-      if (this.isSearchable) {
-        this.marker = new Mark(this.$refs.body);
-      }
+      this.registerMarker();
     },
   };
 </script>

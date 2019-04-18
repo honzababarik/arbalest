@@ -42,11 +42,11 @@
         this.addLog(`Err: ${err}`, 'danger');
       },
       onReport(report) {
-        this.addLog(`Report is available!`, 'warning');
+        this.addLog('Report is available!', 'warning');
         this.$store.dispatch('Job/addReport', {
           testId: this.job.test_id,
-          data: report
-        })
+          data: report,
+        });
       },
       onExit(exitCode) {
         if (exitCode === 0) {
