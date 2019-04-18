@@ -7,6 +7,7 @@ import Notifications from 'vue-notification';
 import VModal from 'vue-js-modal';
 import VTooltip from 'v-tooltip';
 import VueApexCharts from 'vue-apexcharts';
+import fixPath from 'fix-path';
 
 import App from './App';
 import router from './router';
@@ -17,6 +18,7 @@ import Panel from './components/Panel';
 if (!process.env.IS_WEB) {
   Vue.use(require('vue-electron'));
 }
+fixPath();
 Vue.http = Vue.prototype.$http = axios;
 Vue.config.productionTip = false;
 

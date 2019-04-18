@@ -27,7 +27,7 @@ class Terminal {
         onErr('Command already running!');
       }
       return null;
-    }
+    } 
 
     const { spawn } = require('child_process');
 

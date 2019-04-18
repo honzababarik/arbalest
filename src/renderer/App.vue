@@ -48,10 +48,9 @@
   import EnvironmentModal from './views/EnvironmentModal';
   import Artillery from './components/Artillery';
 
-  // TODO CPU usage must get better
+  // TODO CPU usage must get better, free mem is not very good calculation...
   // TODO how come two scenarios after each other have different response times
   // TODO sort scenarios
-  // TODO fix terminal search in case terminal gets hidden, it stops working
 
   // TODO make it possible to readjust the rate/duration on the Config screen
   // TODO Test configuration more user friendly

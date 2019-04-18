@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron' // eslint-disable-line
+import { app, BrowserWindow, Menu } from 'electron' // eslint-disable-line
 import path from 'path';
 
 if (process.env.NODE_ENV !== 'development') {
@@ -7,6 +7,29 @@ if (process.env.NODE_ENV !== 'development') {
 
 let mainWindow;
 const winURL = process.env.NODE_ENV === 'development' ? 'http://localhost:9080' : `file://${__dirname}/index.html`;
+
+function createMenu() {
+  var template = [{
+    label: "Arbalest",
+    submenu: [
+      { label: "About Arbalest", selector: "orderFrontStandardAboutPanel:" },
+      { type: "separator" },
+      { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
+    ]}, {
+    label: "Edit",
+    submenu: [
+      { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+      { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+      { type: "separator" },
+      { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+      { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+      { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+      { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+    ]}
+  ];
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -22,6 +45,8 @@ function createWindow() {
     titleBarStyle: 'hiddenInset',
     icon: path.join(__dirname, 'assets/icon.png'),
   });
+
+  createMenu();
 
   mainWindow.loadURL(winURL);
 

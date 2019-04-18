@@ -10,7 +10,7 @@
     "build:dir": "node .electron-vue/build.js && electron-builder --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
     "build:web": "cross-env BUILD_TARGET=web node .electron-vue/build.js",
-    "build:mac" : "build --mac dir",
+    "build:mac": "build --mac dir",
     "dev": "node .electron-vue/dev-runner.js",
     "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter src",
     "lint:fix": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter --fix src",
@@ -20,11 +20,14 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "arbalest",
+    "productName": "Arbalest",
     "appId": "io.develite.arbalest",
     "directories": {
       "output": "build"
     },
+    "asarUnpack": [
+      "dist/electron/static/*"
+    ],
     "files": [
       "dist/electron/**/*"
     ],
@@ -61,6 +64,7 @@
     "artillery": "^1.6.0-27",
     "axios": "^0.18.0",
     "electron-store": "^3.1.0",
+    "fix-path": "^2.1.0",
     "mark.js": "^8.11.1",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.21",

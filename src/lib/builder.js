@@ -26,6 +26,15 @@ const toScenariosJSON = (scenarios) => {
   ];
 };
 
+const getStaticPath = () => {
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  if (process.env.NODE_ENV === 'development') {
+    return __static + '/';
+  }
+  
+  return __dirname.replace('app.asar', 'app.asar.unpacked') + '/static/';
+}
+
 
 class ConfigBuilder {
 
@@ -110,7 +119,7 @@ class ConfigBuilder {
           arrivalRate: this.rate,
         }],
         variables: this.variables,
-        processor: '../static/processor.js',
+        processor: getStaticPath() + 'processor.js',
         defaults: {
           headers: this.headers,
         },
