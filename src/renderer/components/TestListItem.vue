@@ -22,8 +22,6 @@
 
 <script>
 
-  import { mapGetters } from 'vuex';
-
   export default {
     props: {
       test: Object,
@@ -58,9 +56,10 @@
       },
       getProgressStyle() {
         if (this.job && this.getMaxResponses > 0) {
-          const progress = Math.round(this.job.responses.length / this.getMaxResponses * 100);
+          const progress = Math.round((this.job.responses.length / this.getMaxResponses) * 100);
           return `width: ${progress}%`;
         }
+        return '';
       },
     },
   };

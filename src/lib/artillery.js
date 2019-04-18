@@ -30,7 +30,7 @@ class Artillery extends Observable {
       args.push('-q');
     }
 
-    this.pid = this.terminal.run(
+    this.pid = this.terminal.runNode(
       'artillery',
       args,
       this.onStart,

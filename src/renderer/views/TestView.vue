@@ -191,13 +191,13 @@
       },
     },
     watch: {
-      'job.responses': function (is, was) {
+      'job.responses'(is, was) {
         this.$refs.responses.scroll();
       },
-      'job.logs': function (is, was) {
+      'job.logs'(is, was) {
         this.$refs.terminal.scroll();
       },
-      'job.is_running': function (isRunning, wasRunning) {
+      'job.is_running'(isRunning, wasRunning) {
         if (isRunning && !wasRunning) {
           this.startElapsedTimer();
         }

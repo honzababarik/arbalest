@@ -19,9 +19,9 @@ class Test {
     }
   }
 
-  validate(data) {
-    // TODO validate against schema or throw error
-  }
+  // validate(data) {
+  //   TODO validate against schema or throw error
+  // }
 
   _updateFields(fields, data, model = this) {
     const updateFields = {};
@@ -35,7 +35,7 @@ class Test {
   }
 
   create(data, model = this) {
-    this.validate(data);
+    // this.validate(data);
     return this._updateFields(Test.all, data, model);
   }
 

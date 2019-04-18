@@ -45,7 +45,7 @@
         isExpanded: !this.isCollapsed,
         marker: null,
       };
-  },
+    },
     methods: {
       onClickHeader() {
         if (!this.isCollapsible) {
@@ -75,7 +75,7 @@
           $results: [],
         };
         if (this.marker) {
-          this.marker.unmark()
+          this.marker.unmark();
         }
       },
       registerMarker() {
@@ -84,7 +84,7 @@
           if (this.isSearchable) {
             this.marker = new Mark(this.$refs.body);
           }
-        })
+        });
       },
       onKeyUpSearch(e) {
         if (e.keyCode === this.$dvlt.consts.KEY_ENTER) {
@@ -130,7 +130,7 @@
       },
     },
     watch: {
-      'search.query': function (newQuery, oldQuery) {
+      'search.query'(newQuery) {
         this.markSearch(newQuery);
       },
     },

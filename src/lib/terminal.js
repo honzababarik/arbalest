@@ -1,3 +1,6 @@
+import fixPath from 'fix-path';
+import { remote } from 'electron';
+
 class Terminal {
 
   constructor() {
@@ -21,13 +24,30 @@ class Terminal {
     this.subprocess = null;
   }
 
+  getPackageExecPath(command) {
+    let path = '';
+    if (process.env.NODE_ENV === 'production') {
+      path = remote.app.getAppPath().replace('app.asar', 'app.asar.unpacked');
+    }
+    else {
+      path = process.cwd();
+    }
+    return `${path}/node_modules/${command}/bin/${command}`;
+  }
+
+  runNode(packageName, args, onStart, onOut, onErr, onExit) {
+    args.unshift(this.getPackageExecPath(packageName));
+    return this.run('node', args, onStart, onOut, onErr, onExit);
+  }
+
   run(command, args, onStart, onOut, onErr, onExit) {
+    fixPath();
     if (this.pid) {
       if (onErr) {
         onErr('Command already running!');
       }
       return null;
-    } 
+    }
 
     const { spawn } = require('child_process');
 
