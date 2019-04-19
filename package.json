@@ -1,6 +1,6 @@
 {
   "name": "arbalest",
-  "version": "0.0.1",
+  "version": "0.5.0",
   "author": "Honza Babarik <honzababarik@gmail.com>",
   "description": "Postman for Load Testing",
   "license": "Apache-2.0",
