@@ -1,7 +1,7 @@
 <template>
   <div class="response">
     <div class="main" @click="onClick">
-      <div class="info">
+      <div class="basic">
         <div class="tag" :class="getMethodTagCss">{{response.method}}</div>
         <div class="tag" :class="getStatusTagCss">{{response.status_code}}</div>
         <div class="url">{{response.url}}</div>
@@ -55,7 +55,7 @@
         if (statusCode >= 500) {
           return 'danger';
         }
-        return '';
+        return 'info';
       },
     },
   };
@@ -82,7 +82,7 @@
     .side {
       padding: 10px 15px;
     }
-    .info {
+    .basic {
       display: flex;
       flex-direction: row;
       align-items: center;

@@ -15,7 +15,7 @@
         <input type="number" v-model.number="test.duration">
       </div>
       <div class="form-group left-sm" :class="{'error': this.hasError('rate')}">
-        <label>Rate</label>
+        <label>Rate (per second)</label>
         <input type="number" v-model.number="test.rate">
       </div>
     </div>
@@ -25,8 +25,8 @@
     <div class="form-group" :class="{'error': this.hasError('headers')}">
       <label>Headers</label>
       <div class="d-flex bottom-sm" v-for="(header, i) in test.headers" :key="i">
-        <input class="form-control form-control-xs flex-1" type="text" v-model.trim="header.name" placeholder="Name">
-        <input class="form-control form-control-xs flex-1 left-sm" type="text" v-model.trim="header.value" placeholder="Value">
+        <input class="form-control form-control-sm flex-1" type="text" v-model.trim="header.name" placeholder="Name">
+        <input class="form-control form-control-sm flex-1 left-sm" type="text" v-model.trim="header.value" placeholder="Value">
         <button class="btn left-sm btn-xs" @click="onClickRemoveHeader(i)">Remove</button>
       </div>
     </div>
@@ -36,9 +36,11 @@
 
     <div class="form-group" :class="{'error': this.hasError('scenarios')}">
       <label>Scenarios</label>
-      <ScenarioListItem
-        v-for="(scenario, i) in test.scenarios" :key="i" :scenario="scenario" :base-url="test.url"
-        @remove="onClickRemoveScenario" @edit="onClickEditScenario" />
+      <draggable v-model="test.scenarios" handle=".handle">
+        <ScenarioListItem
+          v-for="(scenario, i) in test.scenarios" :key="i" :scenario="scenario" :base-url="test.url"
+          @remove="onClickRemoveScenario" @edit="onClickEditScenario" />
+      </draggable>
     </div>
     <button class="btn btn-info btn-xs" @click="onClickAddScenario">Add Scenario</button>
 
@@ -60,11 +62,13 @@
   import Panel from '@/components/Panel';
   import ScenarioListItem from '@/components/ScenarioListItem';
   import ScenarioModal from './ScenarioModal';
+  import draggable from 'vuedraggable';
 
   export default {
     components: {
       Panel,
       ScenarioListItem,
+      draggable,
     },
     data() {
       return {
@@ -81,6 +85,10 @@
       };
   },
     methods: {
+      onStopDragging(e) {
+        // console.log('Moving around', e.oldIndex, e.newIndex)
+        // this.$dvlt.array.moveElement(this.test.scenarios, e.oldIndex, e.newIndex);
+      },
       onClickCancel() {
         this.$router.go(-1);
       },

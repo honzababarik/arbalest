@@ -13,7 +13,10 @@
     },
     methods: {
       run() {
-        this.artillery.run(this.test, this.settings, this.environment);
+        const test = Object.assign({}, this.test)
+        test.duration = this.job.duration;
+        test.rate = this.job.rate;
+        this.artillery.run(test, this.settings, this.environment);
       },
       stop() {
         this.artillery.stop();

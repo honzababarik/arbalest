@@ -1,8 +1,9 @@
 <template>
   <div class="scenario-list-item">
+    <Icon icon="grip-lines" class="handle right-sm color-text-dark" />
     <button class="btn btn-xs right-sm" :class="getButtonClass">{{scenario.method}}</button>
-    <span class="form-control form-control-xs disabled" v-if="baseUrl">{{baseUrl}}</span>
-    <input class="form-control form-control-xs flex-4" type="text" v-model.trim="scenario.url" placeholder="URL" disabled>
+    <span class="form-control form-control-sm disabled" v-if="baseUrl">{{baseUrl}}</span>
+    <input class="form-control form-control-sm flex-4" type="text" v-model.trim="scenario.url" placeholder="URL" disabled>
     <button class="btn left-sm btn-xs" @click="onClickEdit" v-tooltip="'Edit Scenario'">
       <Icon icon='pen' />
     </button>

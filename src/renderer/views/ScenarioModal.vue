@@ -3,19 +3,19 @@
     <div class="scenario">
       <div class="form-group header" :class="{'error': hasError('url')}">
         <Dropdown :value='scenario.method' :input-css="getMethodInputStyle" :items="methods" @select="onSelectMethod"></Dropdown>
-        <span class="form-control form-control-xs disabled" v-if="baseUrl">{{baseUrl}}</span>
-        <input class="form-control form-control-xs flex-4" type="text" v-model.trim="scenario.url" placeholder="URL">
+        <span class="form-control form-control-sm disabled" v-if="baseUrl">{{baseUrl}}</span>
+        <input class="form-control form-control-sm flex-4" type="text" v-model.trim="scenario.url" placeholder="URL">
       </div>
       <div class="body" v-if="canAddBody">
         <div class="d-flex bottom-sm">
-          <label>Body</label>
+          <label class="label">Body</label>
           <Dropdown :items="contentTypes" :value="scenario.content_type" css="dropdown-right" input-css="btn btn-input btn-xs" @select="onSelectContentType" />
         </div>
         <textarea class="form-control" v-if="isRawInput" rows="12" v-model="body" :class="{'error': hasError('body')}" @keydown="onKeyDownBody"></textarea>
         <div v-else>
           <div class="d-flex bottom-sm" v-for="(value, i) in scenario.form" :key="i">
-            <input class="form-control form-control-xs flex-1" type="text" v-model.trim="value.name" placeholder="Name">
-            <input class="form-control form-control-xs flex-1 left-sm" type="text" v-model.trim="value.value" placeholder="Value">
+            <input class="form-control form-control-sm flex-1" type="text" v-model.trim="value.name" placeholder="Name">
+            <input class="form-control form-control-sm flex-1 left-sm" type="text" v-model.trim="value.value" placeholder="Value">
             <button class="btn left-sm btn-xs" @click="onClickRemoveData(i)">Remove</button>
           </div>
           <button class="btn btn-info btn-xs" @click="onClickAddForm">Add</button>

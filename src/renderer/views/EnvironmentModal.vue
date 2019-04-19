@@ -19,8 +19,8 @@
       <div class="form-group">
         <label>Variables</label>
         <div class="d-flex bottom-sm" v-for="(variable, i) in environment.variables" :key="i">
-          <input class="form-control form-control-xs flex-1" type="text" v-model.trim="variable.key" placeholder="Key">
-          <input class="form-control form-control-xs flex-1 left-sm" type="text" v-model.trim="variable.value" placeholder="Value">
+          <input class="form-control form-control-sm flex-1" type="text" v-model.trim="variable.key" placeholder="Key">
+          <input class="form-control form-control-sm flex-1 left-sm" type="text" v-model.trim="variable.value" placeholder="Value">
           <button class="btn left-sm btn-xs" @click="onClickRemoveVariable(i)">Remove</button>
         </div>
       </div>
@@ -33,7 +33,7 @@
         <button class="btn btn-danger" @click="onClickDelete" v-if="!isCreate">Delete</button>
       </div>
       <button class="btn btn-success" @click="onClickSave">
-        {{isCreate ? 'Create' : 'Save changes'}}
+        {{isCreate ? 'Create' : 'Save'}}
       </button>
     </template>
   </Modal>

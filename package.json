@@ -57,7 +57,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.6",
-    "@fortawesome/free-solid-svg-icons": "^5.4.1",
+    "@fortawesome/free-solid-svg-icons": "^5.8.1",
     "@fortawesome/vue-fontawesome": "^0.1.1",
     "apexcharts": "^3.6.7",
     "artillery": "^1.6.0-27",

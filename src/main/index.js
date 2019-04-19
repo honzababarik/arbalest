@@ -8,11 +8,12 @@ if (process.env.NODE_ENV !== 'development') {
 let mainWindow;
 const winURL = process.env.NODE_ENV === 'development' ? 'http://localhost:9080' : `file://${__dirname}/index.html`;
 
-function createMenu() {
+function createMenu(window) {
   const template = [
     {
       label: 'Arbalest',
       submenu: [
+        { label: 'Preferences', accelerator: 'CmdOrCtrl+,', click() { window.webContents.send('open-preferences'); } },
         { label: 'About Arbalest', selector: 'orderFrontStandardAboutPanel:' },
         { type: 'separator' },
         { label: 'Quit', accelerator: 'Command+Q', click() { app.quit(); } },
@@ -49,7 +50,7 @@ function createWindow() {
     icon: path.join(__dirname, 'assets/icon.png'),
   });
 
-  createMenu();
+  createMenu(mainWindow);
 
   mainWindow.loadURL(winURL);
 

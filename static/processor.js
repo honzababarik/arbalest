@@ -1,6 +1,10 @@
-function beforeRequest(requestParams, context, ee, next) {
-  context.vars.startedAt = Date.now();
-  return next();
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return `${s4()}${s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`;
 }
 
 function getContentType(headers) {
@@ -9,6 +13,11 @@ function getContentType(headers) {
     contentType = contentType.split(';')[0];
   }
   return contentType;
+}
+
+function beforeRequest(requestParams, context, ee, next) {
+  context.vars.startedAt = Date.now();
+  return next();
 }
 
 function afterResponse(requestParams, response, context, ee, next) {
@@ -20,6 +29,7 @@ function afterResponse(requestParams, response, context, ee, next) {
     data: {
       method: requestParams.method,
       url: requestParams.url,
+      path: response.request.path,
       status_code: response.statusCode,
       started_at: startedAt,
       ended_at: endedAt,

@@ -3,12 +3,15 @@
     <div class="panel-header no-select" ref="header" @click="onClickHeader">
       <slot name="header">
         <div class="d-flex">
-          <div>{{header}}</div>
+          <div class="title">
+            <Icon :icon="isExpanded ? 'chevron-down' : 'chevron-up'" class="right-sm" v-if="isCollapsible" />
+            {{header}}
+          </div>
           <div class="search-group">
             <span v-if="search.query && search.matches > 0">{{search.index + 1}} of {{search.matches}}</span>
             <span v-if="search.query && search.matches === 0">No matches</span>
             <input
-              class="form-control form-control-xs" v-if="isSearchable"
+              class="form-control form-control-sm" v-if="isSearchable"
               placeholder="Search..." v-model.trim="search.query" @click="onClickSearch" @keyup="onKeyUpSearch">
           </div>
         </div>

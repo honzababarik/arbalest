@@ -7,6 +7,17 @@
         <h2>{{test.url}}</h2>
       </div>
       <div class="menu">
+        <table class="table">
+          <tr>
+            <td><label>Duration:</label></td>
+            <td><input class="form-control form-control-xs" v-model.number="customConfig.duration"></td>
+          </tr>
+          <tr>
+            <td><label>Rate:</label></td>
+            <td><input class="form-control form-control-xs" v-model.number="customConfig.rate"></td>
+          </tr>
+        </table>
+        <div class="divider-h"></div>
         <button class="btn btn-transparent" @click="onClickClear" v-if="!isRunning" v-tooltip="'Clear'">
           <Icon icon='ban' size='lg' />
         </button>
@@ -123,11 +134,13 @@
           minutes: 0,
           seconds: 0,
         },
+        customConfig: null
       };
     },
     methods: {
       onClickClear() {
         this.clear();
+        this.loadCustomConfig();
       },
       clear() {
         console.clear();
@@ -138,7 +151,10 @@
       },
       async onClickRun() {
         this.clear();
-        this.$store.dispatch('Job/startJob', this.test);
+        const test = Object.assign({}, this.test);
+        test.duration = this.customConfig.duration;
+        test.rate = this.customConfig.rate;
+        this.$store.dispatch('Job/startJob', test);
       },
       onClickRunCloud() {
         this.$dvlt.notify('Cloud integration is not yet implemented.', 'warn');
@@ -189,6 +205,12 @@
           this.remaining.seconds = remainingTime.seconds;
         }
       },
+      loadCustomConfig() {
+        this.customConfig = {
+          rate: this.test.rate,
+          duration: this.test.duration,
+        }
+      }
     },
     watch: {
       'job.responses': function (is, was) {
@@ -414,20 +436,24 @@
         };
       },
       latencyChartData() {
-        const data = this.responses.map((response) => {
-          const msSinceStart = response.ended_at - this.job.started_at;
-          return {
-            x: msSinceStart,
+        const series = {};
+        this.responses.forEach((response) => {
+          if (!series[response.path]) {
+            series[response.path] = {
+              name: response.path,
+              data: []
+            }
+          }
+          series[response.path].data.push({
+            x: response.ended_at - this.job.started_at,
             y: response.time,
-          };
+          })
         });
-        if (data.length === 0) {
+
+        if (Object.keys(series).length === 0) {
           return [];
         }
-        return [{
-          name: 'Latency',
-          data,
-        }];
+        return Object.keys(series).map(key => series[key]);
       },
     },
     mounted() {
@@ -443,6 +469,7 @@
       const params = this.$router.currentRoute.params;
       this.testId = params.test_id;
       this.test = this.$store.getters['Test/getTest'](this.testId);
+      this.loadCustomConfig();
       this.elapsed.timer = new Timer();
       this.elapsed.timer.on('tick', this.onElapsedTimerTick);
     },
@@ -521,6 +548,18 @@
       }
     }
 
+    .menu {
+      .table {
+        padding: 6px;
+        label {
+          margin-bottom: 0;
+          text-align: right;
+        }
+        td {
+          vertical-align: text-bottom;
+        }
+      }
+    }
   }
 
   .card {

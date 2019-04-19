@@ -2,7 +2,7 @@
   <div class="wrapper">
     <div class="header">
       <div class="d-flex">
-        <button class="btn btn-success btn-circle right-sm" @click="onClickAdd" v-tooltip="'Add Test'">+</button>
+        <button class="btn btn-theme btn-circle right-sm" @click="onClickAdd" v-tooltip="'Add Test'">+</button>
         <h1>Tests</h1>
       </div>
       <div>
@@ -46,7 +46,7 @@ export default {
   },
   data() {
     return {
-      dropdownItems: ['Import', 'Export'],
+      dropdownItems: ['Import...', 'Export...'],
     };
   },
   methods: {

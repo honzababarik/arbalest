@@ -5,7 +5,7 @@
       <div class="subtitle">{{item.subtitle}}</div>
     </div>
     <div class="form-group" :class="{'error': hasError('value')}">
-      <input class="form-control form-control-xs" type="number" :placeholder="item.placeholder" v-model.number="currentValue" @change="onChange">
+      <input class="form-control form-control-sm" type="number" :placeholder="item.placeholder" v-model.number="currentValue" @change="onChange">
     </div>
   </div>
 </template>
