@@ -22,7 +22,7 @@ To understand how is Artillery intended to be configured, please read https://ar
 
 ## Download
 
-[Download for Mac](https://github.com/honzababarik/arbalest/releases/download/release-0.5.0/Arbalest-0.5.0.dmg)
+[Download for Mac](https://github.com/honzababarik/arbalest/releases/download/0.5.0/Arbalest-0.5.0.dmg)
 
 Builds for Windows/Linux are not yet available. Since Arbalest is built using ElectronJS, theoretically it should't be a problem to provide these builds as well - I just haven't had the time to test those builds yet.
 
