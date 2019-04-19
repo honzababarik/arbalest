@@ -48,6 +48,7 @@
   import EnvironmentModal from './views/EnvironmentModal';
   import Artillery from './components/Artillery';
 
+  // TODO terminal show chevron up down
   // TODO CPU usage must get better, free mem is not very good calculation...
   // TODO how come two scenarios after each other have different response times
   // TODO sort scenarios
