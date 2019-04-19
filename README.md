@@ -1,13 +1,13 @@
 # Arbalest
 
-Arbalest is a simple GUI built on Electron.JS that
+Arbalest is a simple desktop app built on Electron that
 uses Artillery (https://github.com/artilleryio/artillery) to configure and perform Load Testing.
 
 The idea behind Arbalest is to make the Load Testing configuration as simple as possible. While it is possible to  perform the Load Testing of the servers using Arbalest, you would likely hit the limitation of your local machine before you hit the limitations of your server.
 
 For this reason Arbalest is intended to be used to define those Tests and execute them in a small scale to confirm the expected request/response flow. Afterwards you can either export those configurations and run them using Artillery as part of your CI/CD pipeline or as on-premise solution using Artillery CLI.
 
-Eventually I'd like to add the possibility to run the configuration with ad-hoc spun AWS Lambda/GCF/Azure Functions, so it can be triggered from your local machine while using the power of the Cloud.
+Eventually I'd like to add the possibility to run the configuration with ad-hoc spun AWS Lambda/GCF/Azure Functions, so it can be triggered from your local machine while using the power of the Cloud, and host Arbalest as a service on a public domain.
 
 To understand how is Artillery intended to be configured, please read https://artillery.io/docs/basic-concepts/.
 
