@@ -130,7 +130,7 @@
       },
     },
     watch: {
-      'search.query'(newQuery) {
+      'search.query': function (newQuery) {
         this.markSearch(newQuery);
       },
     },

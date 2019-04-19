@@ -27,7 +27,7 @@ class Terminal {
   getPackageExecPath(command) {
     let path = '';
     if (process.env.NODE_ENV === 'production') {
-      path = remote.app.getAppPath().replace('app.asar', 'app.asar.unpacked');
+      path = remote.app.getAppPath();
     }
     else {
       path = process.cwd();
@@ -36,8 +36,7 @@ class Terminal {
   }
 
   runNode(packageName, args, onStart, onOut, onErr, onExit) {
-    args.unshift(this.getPackageExecPath(packageName));
-    return this.run('node', args, onStart, onOut, onErr, onExit);
+    return this.run(this.getPackageExecPath(packageName), args, onStart, onOut, onErr, onExit);
   }
 
   run(command, args, onStart, onOut, onErr, onExit) {
@@ -49,9 +48,9 @@ class Terminal {
       return null;
     }
 
-    const { spawn } = require('child_process');
+    const { fork } = require('child_process');
 
-    this.subprocess = spawn(command, args);
+    this.subprocess = fork(command, args, { silent: true });
     this.pid = this.subprocess.pid;
 
     onStart(this.pid);

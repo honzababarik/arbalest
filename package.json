@@ -10,7 +10,6 @@
     "build:dir": "node .electron-vue/build.js && electron-builder --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
     "build:web": "cross-env BUILD_TARGET=web node .electron-vue/build.js",
-    "build:mac": "build --mac dir",
     "dev": "node .electron-vue/dev-runner.js",
     "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter src",
     "lint:fix": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter --fix src",
@@ -26,9 +25,7 @@
       "output": "build"
     },
     "asarUnpack": [
-      "dist/electron/static/*",
-      "node_modules/artillery/**/*",
-      "node_modules/ms/**/*"
+      "dist/electron/static/*"
     ],
     "files": [
       "dist/electron/**/*"
