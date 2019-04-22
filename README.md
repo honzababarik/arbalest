@@ -1,4 +1,4 @@
- # Arbalest <img alt="Logo" src="./img/icon.png" align="right" height="36">
+ # Arbalest [Beta] <img alt="Logo" src="./img/icon.png" align="right" height="36">
 
 Arbalest is a simple desktop app built on Electron that
 uses Artillery (https://github.com/artilleryio/artillery) to configure and perform Load Testing.
