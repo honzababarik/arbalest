@@ -7,6 +7,8 @@ The idea behind Arbalest is to make the Load Testing configuration as simple as 
 
 For this reason Arbalest is intended to be used to define those Tests and execute them in a small scale to confirm the expected request/response flow. Afterwards you can either export those configurations and run them using Artillery as part of your CI/CD pipeline or as on-premise solution using Artillery CLI.
 
+![Screenshot 1](./img/screenshot1.png "Screenshot 1")
+
 Eventually I'd like to add the possibility to run the configuration with ad-hoc spun AWS Lambda/GCF/Azure Functions, so it can be triggered from your local machine while using the power of the Cloud, and host Arbalest as a service on a public domain.
 
 To understand how is Artillery intended to be configured, please read https://artillery.io/docs/basic-concepts/.
