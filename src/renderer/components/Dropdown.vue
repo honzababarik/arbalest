@@ -2,13 +2,19 @@
   <div class="dropdown" :class="css">
     <button :class="inputCss" @click="onClickExpand">
       <slot name="input">
-        <Icon :icon="isExpanded ? 'chevron-up' : 'chevron-down'" />
+        <Icon :icon="displayIcon" :size="iconSize" />
         <span class="left-xs">{{value}}</span>
       </slot>
     </button>
     <ul v-if="isExpanded">
       <slot name="items">
-        <li v-for="(item, i) in items" @click="onClickItem(i)" :key="item">{{item}}</li>
+        <li v-for="(item, i) in displayItems" @click="onClickItem(i)" :key="i">
+          <hr v-if="item.name === '-'" />
+          <a v-else>
+            <Icon :icon="item.icon" v-if="item.icon" class="right-sm" />
+            {{item.name}}
+          </a>
+        </li>
       </slot>
     </ul>
   </div>
@@ -29,6 +35,14 @@ export default {
       type: Array,
       default: () => [],
     },
+    icon: {
+      type: String,
+      default: null
+    },
+    iconSize: {
+      type: String,
+      default: null
+    }
   },
   data() {
     return {
@@ -45,6 +59,24 @@ export default {
       this.isExpanded = !this.isExpanded;
     },
   },
+  computed: {
+    displayIcon() {
+      if (this.icon) {
+        return this.icon;
+      }
+      return this.isExpanded ? 'chevron-up' : 'chevron-down';
+    },
+    displayItems() {
+      return this.items.map(item => {
+        if (typeof item === 'string') {
+          return {
+            name: item
+          }
+        }
+        return item;
+      })
+    }
+  }
 };
 </script>
 
@@ -72,7 +104,7 @@ export default {
       overflow: scroll;
       border: 1px solid $input-border-color;
       border-radius: $input-border-radius;
-      li {
+      a {
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -83,6 +115,13 @@ export default {
         &:hover {
           background-color: $border-color;
         }
+      }
+      hr {
+        padding: 0;
+        height: 1px;
+        background-color: $border-color;
+        margin: 0;
+        border: 0;
       }
     }
     &.dropdown-right {

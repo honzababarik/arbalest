@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import axios from 'axios';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faSpinner, faEllipsisV, faPlayCircle, faPen, faTrashAlt, faStopCircle, faBan, faCog, faTimes, faPlus, faChevronDown, faChevronUp, faCloudUploadAlt, faHourglass, faPause, faGripLines } from '@fortawesome/free-solid-svg-icons';
+import { faSpinner, faEllipsisV, faPlayCircle, faPen, faTrashAlt, faStopCircle, faBan, faCog, faTimes, faPlus, faChevronDown, faChevronUp, faCloudUploadAlt, faHourglass, faPause, faGripLines, faFileExport } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import Notifications from 'vue-notification';
 import VModal from 'vue-js-modal';
@@ -30,7 +30,7 @@ VTooltip.options.defaultPlacement = 'bottom';
 Vue.use(VModal, { dynamic: true });
 
 Vue.component('Icon', FontAwesomeIcon);
-library.add(faSpinner, faEllipsisV, faPlayCircle, faPen, faTrashAlt, faStopCircle, faBan, faCog, faTimes, faPlus, faChevronDown, faChevronUp, faCloudUploadAlt, faHourglass, faPause, faGripLines);
+library.add(faSpinner, faEllipsisV, faPlayCircle, faPen, faTrashAlt, faStopCircle, faBan, faCog, faTimes, faPlus, faChevronDown, faChevronUp, faCloudUploadAlt, faHourglass, faPause, faGripLines, faFileExport);
 
 Vue.component('Panel', Panel);
 

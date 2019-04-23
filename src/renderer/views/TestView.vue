@@ -31,12 +31,10 @@
           <Icon icon='cloud-upload-alt' size='lg' />
         </button>
         <div class="divider-h"></div>
-        <button class="btn btn-transparent" @click="onClickEdit" v-tooltip="'Edit Test'">
-          <Icon icon='pen' size='lg' />
-        </button>
-        <button class="btn btn-transparent" @click="onClickDelete"  v-tooltip="'Delete Test'">
-          <Icon icon='trash-alt' size='lg' />
-        </button>
+        <Dropdown
+          :items="editMenuItems" @select="onSelectEditMenu"
+          css="dropdown-right" input-css="btn btn-transparent"
+          icon="ellipsis-v" icon-size="lg" />
       </div>
     </div>
 
@@ -50,7 +48,7 @@
 
     <div class="content">
       <div class="row flex-1 bottom-md" v-if="shouldShowCharts">
-        <div class="card card-absolute">
+        <div class="card">
           <div class="header">Response Codes</div>
           <div class="body">
             <Chart type="donut" height="100%" :options="codesChartOptions" :series="codesChartOptions.series" />
@@ -111,7 +109,12 @@
 <script>
 
   import ResponseListItem from '@/components/ResponseListItem';
+  import Dropdown from '@/components/Dropdown';
   import Timer from '@/../lib/timer';
+  import Storage from '@/../lib/storage';
+  import Artillery from '@/../lib/artillery';
+
+  const { dialog } = require('electron').remote;
 
   const REMAINING_TIME_EST_MIN_RESPONSE_LIMIT = 5;
 
@@ -119,12 +122,13 @@
     name: 'test',
     components: {
       ResponseListItem,
+      Dropdown
     },
     data() {
       return {
         testId: null,
         test: null,
-        artillery: null,
+        customConfig: null,
         elapsed: {
           minutes: 0,
           seconds: 0,
@@ -134,13 +138,25 @@
           minutes: 0,
           seconds: 0,
         },
-        customConfig: null
+        editMenuItems: [
+          { name: 'Edit', icon: 'pen' },
+          { name: 'Export configuration', icon: 'file-export' },
+          { name: '-' },
+          { name: 'Delete', icon: 'trash-alt' },
+        ]
       };
     },
     methods: {
       onClickClear() {
         this.clear();
         this.loadCustomConfig();
+      },
+      onSelectEditMenu(index) {
+        switch (index) {
+          case 0: this.onClickEdit(); break;
+          case 1: this.onClickExport(); break;
+          case 3: this.onClickDelete(); break;
+        }
       },
       clear() {
         console.clear();
@@ -149,12 +165,35 @@
       onClickStop() {
         this.$store.dispatch('Job/stopJob', this.test.id);
       },
-      async onClickRun() {
-        this.clear();
+      onClickExport() {
+        const fileName = this.$dvlt.string.replaceAll(`${this.test.name}.json`, ' ', '_');
+        dialog.showSaveDialog({
+          title: 'Export Tests...',
+          message: 'Export',
+          defaultPath: fileName,
+          properties: ['createDirectory'],
+          buttonLabel: 'Export',
+        }, this.onExportFileSelected);
+      },
+      async onExportFileSelected(filePath) {
+        try {
+          const config = new Artillery().createConfig(this.getCustomTest(), this.settings, this.environment, true);
+          await new Storage().exportConfigForArtillery(filePath, config);
+          this.$dvlt.notify(`Your test was exported to: ${filePath}!`);
+        }
+        catch (err) {
+          console.warn(`Export failed: ${err}`, 'danger');
+        }
+      },
+      getCustomTest() {
         const test = Object.assign({}, this.test);
         test.duration = this.customConfig.duration;
         test.rate = this.customConfig.rate;
-        this.$store.dispatch('Job/startJob', test);
+        return test;
+      },
+      async onClickRun() {
+        this.clear();
+        this.$store.dispatch('Job/startJob', this.getCustomTest());
       },
       onClickRunCloud() {
         this.$dvlt.notify('Cloud integration is not yet implemented.', 'warn');
@@ -481,7 +520,7 @@
 
   @import "../styles/vars.scss";
 
-  $navbar-height: 64px;
+  $navbar-height: 65px;
   .test {
     flex: 1;
     display: flex;
@@ -492,7 +531,7 @@
       justify-content: space-between;
       align-items: center;
       height: $navbar-height;
-      padding: 0 10px;
+      padding: 0 15px;
       h1 {
         font-size: 16px;
         margin: 0 0 4px 0;
@@ -512,7 +551,7 @@
       button {
         height: inherit;
         width: $navbar-height;
-        padding: 18px 18px;
+        height: $navbar-height;
         border-radius: 0;
         &:hover {
           background-color: $button-hover-color;

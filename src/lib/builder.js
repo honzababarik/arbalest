@@ -1,9 +1,8 @@
-const toFlowJSON = (scenario) => {
+const toFlowJSON = (scenario, isExport = false) => {
   const data = {
     url: scenario.url,
-    beforeRequest: 'beforeRequest',
-    afterResponse: 'afterResponse',
   };
+
   if (scenario.headers) {
     data.headers = scenario.headers;
   }
@@ -13,15 +12,20 @@ const toFlowJSON = (scenario) => {
   if (scenario.form) {
     data.form = scenario.form;
   }
+
+  if (!isExport) {
+    data.beforeRequest = 'beforeRequest';
+    data.afterResponse = 'afterResponse';
+  }
   return {
     [scenario.method]: data,
   };
 };
 
-const toScenariosJSON = (scenarios) => {
+const toScenariosJSON = (scenarios, isExport = false) => {
   return [
     {
-      flow: scenarios.map(scenario => toFlowJSON(scenario)),
+      flow: scenarios.map(scenario => toFlowJSON(scenario, isExport)),
     },
   ];
 };
@@ -108,7 +112,7 @@ class ConfigBuilder {
     return this;
   }
 
-  toJSON() {
+  toJSON(isExport = false) {
     const json = {
       config: {
         target: this.targetUrl,
@@ -117,13 +121,17 @@ class ConfigBuilder {
           arrivalRate: this.rate,
         }],
         variables: this.variables,
-        processor: `${getStaticPath()}processor.js`,
         defaults: {
           headers: this.headers,
         },
       },
-      scenarios: toScenariosJSON(this.scenarios),
+      scenarios: toScenariosJSON(this.scenarios, isExport),
     };
+
+    if (!isExport) {
+      json.config.processor = `${getStaticPath()}processor.js`;
+    }
+
     if (this.timeout) {
       json.config.timeout = this.timeout;
     }

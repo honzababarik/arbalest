@@ -13,9 +13,12 @@ class Artillery extends Observable {
     this.reportPath = null;
   }
 
+  createConfig(test, settings, environment = null, isExport = false) {
+    return new ConfigBuilder(test, settings, environment).toJSON(isExport);
+  }
+
   async run(test, settings, environment = null) {
-    const artilleryConfig = new ConfigBuilder(test, settings, environment);
-    const file = await new Storage().createTempJSON(artilleryConfig.toJSON());
+    const file = await new Storage().createTempJSON(this.createConfig(test, settings, environment));
     this.emit('line', `Configuration stored under: ${file.filePath}`);
 
     this.configPath = file.filePath;

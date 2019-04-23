@@ -51,6 +51,11 @@ class Storage {
     return this.createFile(filePath, content);
   }
 
+  exportConfigForArtillery(filePath, test) {
+    const content = this.getJSONContent(test);
+    return this.createFile(filePath, content);
+  }
+
   async getJSONFromFile(filePath) {
     const content = await this.readFile(filePath);
     return content ? JSON.parse(content) : null;

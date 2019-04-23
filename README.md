@@ -21,10 +21,11 @@ To understand how is Artillery intended to be configured, please read https://ar
 - Output of every response coming from the server
 - Real time response time for every scenario in a test
 - Response time report - min, max, median, p95 and p99
+- Export tests as Artillery Config files to be used by Artillery CLI in your CI/CD pipeline
 
 ## Download
 
-[Download for Mac](https://github.com/honzababarik/arbalest/releases/download/0.5.0/Arbalest-0.5.0.dmg)
+[Download for Mac](https://github.com/honzababarik/arbalest/releases/download/0.5.1/Arbalest-0.5.1.dmg)
 
 Builds for Windows/Linux are not yet available. Since Arbalest is built using ElectronJS, theoretically it should't be a problem to provide these builds as well - I just haven't had the time to test those builds yet.
 
@@ -32,7 +33,6 @@ I encourage anyone with Windows/Linux to build Arbalest locally and to confirm i
 
 ## Upcoming Features
 
-- Export Tests as Artillery Configuration files to be used outside of Arbalest
 - Run Test directly from Arbalest by ad-hoc spun AWS/GCF/Azure Functions
 - Add additional graphs and analysis of response times
 - Add Cookies to the request
